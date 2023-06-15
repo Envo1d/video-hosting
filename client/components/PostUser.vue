@@ -35,8 +35,8 @@ function isHover(bool) {
 <template>
   <div
     class="relative brightness-90 hover:brightness-[1.1] cursor-pointer"
-    @mouseenter="$event => isHover(true)"
-    @mouseleave="$event => isHover(false)"
+    @mouseenter="() => isHover(true)"
+    @mouseleave="() => isHover(false)"
   >
     <div v-if="!isLoaded" class="absolute flex items-center justify-center top-0 left-0 aspect-[3/4] w-full object-cover rounded-md bg-black">
       <Icon class="animate-spin ml-1" name="mingcute:loading-line" size="100" color="#ffffff" />

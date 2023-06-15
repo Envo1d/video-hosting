@@ -1,6 +1,7 @@
 <script setup>
 const route = useRoute()
 const showMenu = ref(false)
+const { $userStore, $generalStore } = useNuxtApp()
 </script>
 
 <template>
@@ -31,18 +32,21 @@ const showMenu = ref(false)
           <span class="px-2 font-medium text-[15px]">Upload</span>
         </button>
 
-        <div v-if="false" class="flex items-center">
-          <button class="flex items-center bg-[#f02c56] text-white border rounded-md px-3 py-[6px]">
+        <div v-if="!$userStore.id" class="flex items-center">
+          <button
+            class="flex items-center bg-[#f02c56] text-white border rounded-md px-3 py-[6px]"
+            @click="() => $generalStore.isLoginOpen = true"
+          >
             <span class="mx-4 font-medium text-[15px]">Log in</span>
           </button>
           <Icon name="mdi:dots-vertical" color="#161724" size="25" />
         </div>
 
-        <div class="flex items-center">
+        <div v-else class="flex items-center">
           <Icon class="ml-1 mr-4" color="#161724" size="30" name="carbon:send-alt" />
           <Icon class="mr-5" color="#161724" size="27" name="bx:message-detail" />
           <div class="relative">
-            <button class="mt-1" @click="$event => showMenu = !showMenu">
+            <button class="mt-1" @click="() => showMenu = !showMenu">
               <img src="https://picsum.photos/id/83/300/320" class="rounded-full" width="33">
             </button>
 
@@ -52,7 +56,7 @@ const showMenu = ref(false)
             >
               <NuxtLink
                 class="flex items-center justify-start py-3 px-2 hover:bg-gray-100 cursor-pointer"
-                @click="$event => showMenu = false"
+                @click="() => showMenu = false"
               >
                 <Icon name="ph:user" size="22" />
                 <span class="pl-2 font-semibold text-sm">Profile</span>

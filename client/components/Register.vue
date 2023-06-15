@@ -55,7 +55,7 @@ function register() {}
         :disabled="!email || !password || !name || !confirmPassword"
         :class="(!email || !password || !name || !confirmPassword) ? 'bg-gray-200' : 'bg-[#f02c56]'"
         class="w-full font-semibold text-white py-3 rounded-sm text-[17px]"
-        @click="$event => register()"
+        @click="() => register()"
       >
         Sign up
       </button>

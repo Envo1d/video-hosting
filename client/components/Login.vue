@@ -45,7 +45,7 @@ function login() {}
         :disabled="!email || !password"
         :class="(!email || !password) ? 'bg-gray-200' : 'bg-[#f02c56]'"
         class="w-full font-semibold text-white py-3 rounded-sm text-[17px]"
-        @click="$event => login()"
+        @click="() => login()"
       >
         Log in
       </button>

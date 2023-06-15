@@ -1,5 +1,5 @@
 <script setup>
-
+const { $generalStore } = useNuxtApp()
 </script>
 
 <template>
@@ -15,7 +15,11 @@
           <div class="truncate text-[18px]">
             User name
           </div>
-          <button v-if="true" class="flex item-center rounded-md py-1.5 px-3.5 mt-3 text-[15px] font-semibold border hover:bg-gray-100">
+          <button
+            v-if="true"
+            class="flex item-center rounded-md py-1.5 px-3.5 mt-3 text-[15px] font-semibold border hover:bg-gray-100"
+            @click="() => $generalStore.isEditProfileOpen = true"
+          >
             <Icon class="mt-0.5 mr-1" name="mdi:pencil" size="18" />
             <div>Edit profile</div>
           </button>

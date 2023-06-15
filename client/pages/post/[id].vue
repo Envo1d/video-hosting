@@ -46,7 +46,7 @@ watch(() => isLoaded.value, () => {
         <button
           :disabled="!isLoaded"
           class="absolute z-20 right-4 top-4 flex items-center justify-center rounded-full bg-gray-700 p-1.5 hover:bg-gray-800"
-          @click="$event => loopThroughPostsUp()"
+          @click="() => loopThroughPostsUp()"
         >
           <Icon name="mdi:chevron-up" size="30" color="#ffffff" />
         </button>
@@ -54,7 +54,7 @@ watch(() => isLoaded.value, () => {
         <button
           :disabled="!isLoaded"
           class="absolute z-20 right-4 top-20 flex items-center justify-center rounded-full bg-gray-700 p-1.5 hover:bg-gray-800"
-          @click="$event => loopThroughPostsDown()"
+          @click="() => loopThroughPostsDown()"
         >
           <Icon name="mdi:chevron-down" size="30" color="#ffffff" />
         </button>
@@ -100,7 +100,7 @@ watch(() => isLoaded.value, () => {
           </div>
         </div>
 
-        <Icon v-if="true" class="cursor-pointer" size="25" name="material-symbols:delete-outline-sharp" @click="$event => deletePost()" />
+        <Icon v-if="true" class="cursor-pointer" size="25" name="material-symbols:delete-outline-sharp" @click="() => deletePost()" />
       </div>
 
       <div class="px-8 mt-4 text-sm">
@@ -150,7 +150,7 @@ watch(() => isLoaded.value, () => {
             <div class="ml-14 pt-0.5 w-full">
               <div class="font-semibold flex items-center justify-between text-[18px]">
                 User name
-                <Icon v-if="true" class="cursor-pointer" size="25" name="material-symbols:delete-outline-sharp" @click="$event => deleteComment()" />
+                <Icon v-if="true" class="cursor-pointer" size="25" name="material-symbols:delete-outline-sharp" @click="() => deleteComment()" />
               </div>
               <div class="font-light text-[15px]">
                 Lorem ipsum dolor, sit amet consectetur adipisicing elit. Fuga, aliquam. Magnam asperiores repellat, consectetur nulla, exercitationem at dolor facilis, qui quibusdam totam eum autem earum. Est veniam saepe magni libero?
@@ -170,9 +170,9 @@ watch(() => isLoaded.value, () => {
           :class="inputFocused ? 'border-2 border-gray-400' : 'border-2 border-[#f1f1f2]'"
           class="flex items-center rounded-lg w-full lg:max-w-[420px]"
         >
-          <input v-model="comment" class="bg-[#f1f1f2] text-[14px] focus:outline-none w-full lg:max-w-[420px] p-2 rounded-lg" type="text" placeholder="Add comment..." @focus="$event => inputFocused = true" @blur="$event => inputFocused = false">
+          <input v-model="comment" class="bg-[#f1f1f2] text-[14px] focus:outline-none w-full lg:max-w-[420px] p-2 rounded-lg" type="text" placeholder="Add comment..." @focus="() => inputFocused = true" @blur="() => inputFocused = false">
         </div>
-        <button class="font-semibold text-sm ml-5 pr-1" :disabled="!comment" :class="comment ? 'text-[#f02c56] cursor-pointer' : 'text-gray-400'" @click="$event => addComment()">
+        <button class="font-semibold text-sm ml-5 pr-1" :disabled="!comment" :class="comment ? 'text-[#f02c56] cursor-pointer' : 'text-gray-400'" @click="() => addComment()">
           Post
         </button>
       </div>

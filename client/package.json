@@ -1,5 +1,5 @@
 {
-	"name": "nuxt-app",
+	"name": "tiktok-clone-client",
 	"private": true,
 	"scripts": {
 		"build": "nuxt build",

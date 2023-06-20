@@ -33,6 +33,15 @@ export const loginUserSchema = object({
   }),
 });
 
+export const updateProfileSchema = object({
+  body: object({
+    name: string({
+      required_error: 'Name is required',
+    }).min(3, 'Invalid name'),
+    bio: string().min(3, 'Invalid bio').optional(),
+  }),
+});
+
 export type CreateUserInput = Omit<
   TypeOf<typeof createUserSchema>['body'],
   'passwordConfirm'
@@ -40,3 +49,4 @@ export type CreateUserInput = Omit<
 
 export type LoginUserInput = TypeOf<typeof loginUserSchema>['body'];
 
+export type UpdateProfileInput = TypeOf<typeof updateProfileSchema>['body'];

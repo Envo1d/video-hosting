@@ -1,10 +1,31 @@
-<script setup>
-const email = ref(null)
-const name = ref(null)
-const password = ref(null)
-const confirmPassword = ref(null)
-const errors = ref(null)
-function register() {}
+<script setup lang='ts'>
+import type { IAuthErrors } from '~/types/api.interface'
+
+const { $userStore, $generalStore } = useNuxtApp()
+
+const email = ref('')
+const name = ref('')
+const password = ref('')
+const confirmPassword = ref('')
+const responseError = useState<IAuthErrors>('errors')
+async function register() {
+  responseError.value = { status: '', errors: [] }
+
+  try {
+    await $userStore.auth('register', {
+      email: email.value,
+      password: password.value,
+      name: name.value,
+      passwordConfirm: confirmPassword.value,
+    })
+    await $userStore.getUser()
+
+    $generalStore.isLoginOpen = false
+  }
+  catch (error: any) {
+    responseError.value = error.response.data
+  }
+}
 </script>
 
 <template>
@@ -19,7 +40,7 @@ function register() {}
         placeholder="Full name"
         input-type="text"
         :auto-focus="true"
-        error=""
+        :error="responseError && responseError?.errors?.find(item => item.path[1] === 'name')?.message"
       />
     </div>
 
@@ -28,7 +49,7 @@ function register() {}
         v-model:input="email"
         placeholder="Email address"
         input-type="email"
-        error=""
+        :error="responseError && responseError?.errors?.find(item => item.path[1] === 'email')?.message"
       />
     </div>
 
@@ -37,7 +58,7 @@ function register() {}
         v-model:input="password"
         placeholder="Password"
         input-type="password"
-        error=""
+        :error="responseError && responseError?.errors?.find(item => item.path[1] === 'password')?.message"
       />
     </div>
 
@@ -46,7 +67,7 @@ function register() {}
         v-model:input="confirmPassword"
         placeholder="Confirm password"
         input-type="password"
-        error=""
+        :error="responseError && responseError?.errors?.find(item => item.path[1] === 'passwordConfirm')?.message"
       />
     </div>
 

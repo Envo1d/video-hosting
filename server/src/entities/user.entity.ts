@@ -11,13 +11,16 @@ export class User extends Model {
     @Column({unique: true})
     email: string
 
-    @Column()
+    @Column({default: ''})
+    bio: string
+
+    @Column({select: false})
     password: string
 
     @Column({
-        default: '/images/default.jpg',
+        default: '/default.jpg',
       })
-      photo: string;
+      image: string;
 
     toJSON() {
       return { ...this, password: undefined};

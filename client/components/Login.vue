@@ -1,8 +1,25 @@
-<script setup>
-const email = ref(null)
-const password = ref(null)
-const errors = ref(null)
-function login() {}
+<script setup lang='ts'>
+import type { IAuthErrors } from '~/types/api.interface'
+
+const { $userStore, $generalStore } = useNuxtApp()
+
+const email = ref('')
+const password = ref('')
+const responseError = useState<IAuthErrors>('errors')
+
+async function login() {
+  responseError.value = { status: '', errors: [], message: '' }
+
+  try {
+    await $userStore.auth('login', { email: email.value, password: password.value })
+    await $userStore.getUser()
+
+    $generalStore.isLoginOpen = false
+  }
+  catch (error: any) {
+    responseError.value = error.response.data
+  }
+}
 </script>
 
 <template>
@@ -21,7 +38,7 @@ function login() {}
         placeholder="Email address"
         input-type="email"
         :auto-focus="true"
-        error=""
+        :error="responseError && responseError?.errors?.find(item => item.path[1] === 'email')?.message || responseError?.message"
       />
     </div>
 
@@ -33,7 +50,7 @@ function login() {}
         v-model:input="password"
         placeholder="Password"
         input-type="password"
-        error=""
+        :error="responseError && responseError?.errors?.find(item => item.path[1] === 'password')?.message"
       />
     </div>
     <div class="px-6 text-gray-600 text-[12px]">
@@ -52,3 +69,7 @@ function login() {}
     </div>
   </section>
 </template>
+
+function useNuxtApp(): { $userStore: any; $generalStore: any } {
+  throw new Error('Function not implemented.')
+}

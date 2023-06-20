@@ -1,5 +1,6 @@
 export default {
   port: 'PORT',
+  appUrl: 'APP_URL',
   postgresConfig: {
     host: 'POSTGRES_HOST',
     port: 'POSTGRES_PORT',
@@ -7,8 +8,6 @@ export default {
     password: 'POSTGRES_PASSWORD',
     database: 'POSTGRES_DB',
   },
-  accessTokenPrivateKey: 'JWT_ACCESS_TOKEN_PRIVATE_KEY',
-  accessTokenPublicKey: 'JWT_ACCESS_TOKEN_PUBLIC_KEY',
-  refreshTokenPrivateKey: 'JWT_REFRESH_TOKEN_PRIVATE_KEY',
-  refreshTokenPublicKey: 'JWT_REFRESH_TOKEN_PUBLIC_KEY',
+  accessTokenKey: 'JWT_ACCESS_TOKEN_KEY',
+  refreshTokenKey: 'JWT_REFRESH_TOKEN_KEY',
 };

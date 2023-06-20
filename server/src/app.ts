@@ -20,7 +20,7 @@ AppDataSource.initialize()
     const app = express();
 
     // MIDDLEWARE
-    app.use('/static', express.static(path.join(__dirname, 'public')))
+    app.use(express.static(path.join(__dirname, 'public')))
     
     // 1. Body parser
     app.use(express.json({limit: '10kb'}))

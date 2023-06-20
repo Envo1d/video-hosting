@@ -6,7 +6,7 @@ export default defineNuxtConfig({
   modules: ['nuxt-icon', '@pinia/nuxt', '@pinia-plugin-persistedstate/nuxt'],
   runtimeConfig: {
     public: {
-      API_URL: process.env.API_URL,
+      apiUrl: process.env.API_URL,
     },
   },
   postcss: {

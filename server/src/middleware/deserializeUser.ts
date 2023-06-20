@@ -20,14 +20,14 @@ export const deserializeUser = async (
     } else if (req.cookies.access_token) {
       access_token = req.cookies.access_token;
     }
-
+    
     if (!access_token) {
       return next(new AppError(401, 'You are not logged in'));
     }
 		
     const decoded = verifyJwt<{ sub: string }>(
       access_token,
-      'accessTokenPublicKey'
+      'accessTokenKey'
     );
 
     if (!decoded) {
@@ -37,7 +37,7 @@ export const deserializeUser = async (
     const session = await redisClient.get(decoded.sub);
 
     if (!session) {
-      return next(new AppError(401, `Invalid token or session has expired`));
+      return next(new AppError(419, `Invalid token or session has expired`));
     }
 
     const user = await findUserById(JSON.parse(session).id);

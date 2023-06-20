@@ -42,12 +42,18 @@ export const register = async (
       email: email.toLowerCase(),
       password,
     });
+		
+		const { access_token, refresh_token } = await signTokens(user);
+
+		res.cookie('access_token', access_token, accessTokenCookieOptions);
+		res.cookie('refresh_token', refresh_token, refreshTokenCookieOptions);
+		res.cookie('logged_in', true, {
+			...accessTokenCookieOptions,
+			httpOnly: false,
+		});
 
 		res.status(201).json({
       status: 'success',
-      data: {
-        user,
-      },
     });
 	} catch (error: any) {
 		if(error.code === '23505') {
@@ -105,7 +111,7 @@ export const login = async(
 		
 				const decoded = verifyJwt<{ sub: string }>(
 					refresh_token,
-					'refreshTokenPublicKey'
+					'refreshTokenKey'
 				);
 		
 				if (!decoded) {
@@ -124,7 +130,7 @@ export const login = async(
 					return next(new AppError(403, message));
 				}
 		
-				const access_token = signJwt({ sub: user.id }, 'accessTokenPrivateKey', {
+				const access_token = signJwt({ sub: user.id }, 'accessTokenKey', {
 					expiresIn: `${config.get<number>('accessTokenExpiresIn')}m`,
 				});
 		
@@ -167,22 +173,4 @@ export const login = async(
 			next(error);
 		}
 	};
-
-	export const getMe = async (
-		req: Request,
-		res: Response,
-		next: NextFunction
-	)=>{
-		try {
-			const user = res.locals.user;
 	
-			res.status(200).status(200).json({
-				status: 'success',
-				data: {
-					user,
-				},
-			});
-		} catch (error: any) {
-			next(error);
-		}
-	}

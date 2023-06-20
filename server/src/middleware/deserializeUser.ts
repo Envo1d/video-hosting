@@ -46,7 +46,7 @@ export const deserializeUser = async (
       return next(new AppError(401, `Invalid token or session has expired`));
     }
 
-    res.locals.user = user;
+    res.locals.user = user.toJSON();
 
     next();
   } catch (error: any) {

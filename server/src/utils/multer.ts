@@ -5,6 +5,8 @@ import path from 'path'
 type DestinationCallback = (error: Error | null, destination: string) => void
 type FileNameCallback = (error: Error | null, filename: string) => void
 
+const MAX_FILE_SIZE = 2147483648
+
 export const storage = multer.diskStorage({
 	destination: (
 		request: Request,
@@ -47,7 +49,7 @@ export const videoFilter = (
 	file: Express.Multer.File,
 	callback: FileFilterCallback
 ): void => {
-	if (file.mimetype === 'video/mp4') {
+	if (file.mimetype === 'video/mp4' || file.size <= MAX_FILE_SIZE) {
 		callback(null, true)
 } else {
 		callback(null, false)

@@ -7,7 +7,7 @@
       "dev": "ts-node-dev --respawn --transpile-only --exit-child src/app.ts",
       "typeorm": "typeorm-ts-node-commonjs",
       "build": "tsc -p .",
-      "migrate": "yarn build && yarn typeorm migration:generate ./src/migrations/added-user -d ./src/utils/data-source.ts",
+      "migrate": "yarn build && yarn typeorm migration:generate ./src/migrations/added-post -d ./src/utils/data-source.ts",
       "db:push": "yarn build && yarn typeorm migration:run -d src/utils/data-source.ts"
    },
    "devDependencies": {
@@ -19,7 +19,7 @@
       "@types/multer": "^1.4.7",
       "@types/node": "^16.11.10",
       "@typescript-eslint/eslint-plugin": "^5.59.11",
-      "@typescript-eslint/parser": "^5.59.11",
+      "@typescript-eslint/parser": "^5.60.0",
       "eslint": "^8.42.0",
       "morgan": "^1.10.0",
       "ts-node": "10.7.0",

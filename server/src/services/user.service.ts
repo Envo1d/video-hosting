@@ -26,6 +26,14 @@ export const updateUserImage = async (userId: string, imageUrl: string) => {
   }, {image: imageUrl})
 }
 
+export const getRandomAmount = async (amount: number) => {
+  return await userRepo.createQueryBuilder('user')
+  .select()
+  .orderBy('RANDOM()')
+  .take(amount)
+  .getMany()
+}
+
 export const findUserByEmail = async ({ email }: { email: string }) => {
   return await userRepo.findOneBy({ email });
 };

@@ -73,7 +73,7 @@ export const login = async(
 		try {
 			const { email, password } = req.body;
 			const user = await findUserByEmail({ email });
-	
+
 			if (!user || !(await User.comparePasswords(password, user.password))) {
 				return next(new AppError(400, 'Invalid email or password'));
 			}

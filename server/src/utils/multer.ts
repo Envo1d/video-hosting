@@ -24,7 +24,7 @@ export const storage = multer.diskStorage({
 		file: Express.Multer.File,
 		callback: FileNameCallback
 	): void => {
-		callback(null, Date.now().toString()+file.originalname)
+		callback(null, Date.now().toString()+path.extname(file.originalname))
 	}
 })
 

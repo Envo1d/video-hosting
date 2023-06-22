@@ -11,11 +11,12 @@ onMounted(async () => {
 
   try {
     await $generalStore.hasSessionExpired()
+    await $generalStore.getRandomUsers()
 
     if ($userStore.id)
       $userStore.getUser()
   }
-  catch (error) { console.log(error) }
+  catch (error) { console.error(error) }
 })
 
 watch(() => isLoginOpen.value, val => $generalStore.bodySwitch(val))

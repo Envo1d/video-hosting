@@ -1,12 +1,14 @@
 <script setup>
+const { $userStore } = useNuxtApp()
 const layout = 'upload'
 const file = ref(null)
 const fileDisplay = ref(null)
 const errorType = ref(null)
 const caption = ref('')
 const fileData = ref(null)
-const errors = ref(null)
+const error = ref(null)
 const isUploading = ref(false)
+const router = useRouter()
 
 watch(() => caption.value, (caption) => {
   if (caption.length >= 150) {
@@ -43,6 +45,32 @@ function discard() {
   caption.value = ''
 }
 
+async function createPost() {
+  error.value = null
+
+  const data = new FormData()
+
+  data.append('file', fileData.value || '')
+  data.append('text', caption.value || '')
+
+  if (fileData.value && caption.value)
+    isUploading.value = true
+
+  try {
+    const res = await $userStore.createPost(data)
+    if (res.status === 200) {
+      setTimeout(() => {
+        isUploading.value = false
+        router.push(`/profile/${$userStore.id}`)
+      }, 1000)
+    }
+  }
+  catch (err) {
+    error.value = err.response.data.message
+    isUploading.value = false
+  }
+}
+
 function clearVideo() {
   file.value = null
   fileDisplay.value = null
@@ -53,6 +81,13 @@ function clearVideo() {
 <template>
   <section>
     <UploadError :error-type="errorType" />
+
+    <div
+      v-if="isUploading"
+      class="fixed flex items-center justify-center top-0 left-0 w-full h-screen bg-black z-50 bg-opacity-50"
+    >
+      <Icon class="animate-spin ml-1" name="mingcute:loading-line" size="100" color="#ffffff" />
+    </div>
 
     <NuxtLayout :name="layout">
       <div class="w-full mt-[80px] mb-[40px] bg-white shadow-lg rounded-md py-6 md:px-10 px-4">
@@ -146,9 +181,18 @@ function clearVideo() {
               <button class="px-10 py-2.5 mt-8 border text-[16px] hover:bg-gray-100 rounded-sm" @click="discard">
                 Discard
               </button>
-              <button class="px-10 py-2.5 mt-8 border text-[16px] text-white bg-[#f02c56] rounded-sm">
+              <button
+                class="px-10 py-2.5 mt-8 border text-[16px] text-white bg-[#f02c56] rounded-sm"
+                @click="createPost"
+              >
                 Post
               </button>
+            </div>
+
+            <div v-if="error" class="mt-4">
+              <div class="text-red-600">
+                {{ error }}
+              </div>
             </div>
           </div>
         </div>

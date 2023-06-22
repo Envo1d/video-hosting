@@ -3,6 +3,7 @@ defineProps(['post'])
 
 const route = useRoute()
 const router = useRouter()
+const { $generalStore } = useNuxtApp()
 
 const video = ref(null)
 const isLoaded = ref(false)
@@ -25,6 +26,12 @@ onBeforeUnmount(() => {
   video.value.src = ''
 })
 
+function displayPost(post) {
+  $generalStore.setBackUrl(`/profile/${route.params.id}`)
+  $generalStore.selectedPost = null
+  setTimeout(() => router.push(`/post/${post.id}`), 300)
+}
+
 function isHover(bool) {
   if (bool)
     video.value.play()
@@ -35,6 +42,7 @@ function isHover(bool) {
 <template>
   <div
     class="relative brightness-90 hover:brightness-[1.1] cursor-pointer"
+    @click="displayPost(post)"
     @mouseenter="() => isHover(true)"
     @mouseleave="() => isHover(false)"
   >
@@ -43,12 +51,12 @@ function isHover(bool) {
     </div>
 
     <div>
-      <video ref="video" muted loop class="aspect-[3/4] object-cover rounded-md" src="/sunset.mp4" />
+      <video ref="video" muted loop class="aspect-[3/4] object-cover rounded-md" :src="post.videoUrl" />
     </div>
 
     <div class="px-1">
       <div class="text-gray-700 text-[15px] pt-1 break-words">
-        This is some text
+        {{ post.text }}
       </div>
       <div class="flex items-center -ml-1 text-gray-600 font-bold text-xs">
         <Icon size="20" name="gg:loadbar-sound" />

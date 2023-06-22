@@ -26,9 +26,10 @@ export const updateUserImage = async (userId: string, imageUrl: string) => {
   }, {image: imageUrl})
 }
 
-export const getRandomAmount = async (amount: number) => {
+export const getRandomAmount = async (amount: number, excludeUserId: string) => {
   return await userRepo.createQueryBuilder('user')
   .select()
+  .where('user.id != :id', {id: excludeUserId})
   .orderBy('RANDOM()')
   .take(amount)
   .getMany()
@@ -42,6 +43,30 @@ export const findUserById = async (userId: string) => {
   return await userRepo.findOneBy({ id: userId });
 };
 
+export const getUserImageById = async (userId: string) => {
+  return await userRepo.findOneBy({id:userId}).then(user => user?.image || undefined)
+}
+
+export const getFullUser = async (userId:string) =>{
+  return await userRepo.findOne({
+    relations: ['posts'],
+    where: {
+      id: userId
+    },
+    select: {
+      id: true,
+      name: true,
+      bio: true,
+      image: true,
+      posts: {
+        likes: {
+          id: true
+        }
+      }
+    }
+  })
+}
+
 export const findUser = async (query: Object) => {
   return await userRepo.findOneBy(query);
 };
@@ -49,7 +74,7 @@ export const findUser = async (query: Object) => {
 export const signTokens = async(user: User) => {
 	// redis session
 	redisClient.set(user.id, JSON.stringify(user), {
-		EX: config.get<number>('redisCacheExpiresIn') * 60
+		EX: config.get<number>('redisCacheExpiresIn') * 60 * 24 * 30
 	})
 
 	const access_token = signJwt({ sub: user.id }, 'accessTokenKey', {
@@ -57,7 +82,7 @@ export const signTokens = async(user: User) => {
   });
 
   const refresh_token = signJwt({ sub: user.id }, 'refreshTokenKey', {
-    expiresIn: `${config.get<number>('refreshTokenExpiresIn')}m`,
+    expiresIn: `${config.get<number>('refreshTokenExpiresIn')}d`,
   });
 
   return { access_token, refresh_token };

@@ -15,6 +15,7 @@ export const useUserStore = defineStore('user', {
 
       await $axios.get('auth/refresh')
     },
+
     async auth(type: 'login' | 'register', data: ILoginData | IRegisterData) {
       const { $axios } = useNuxtApp()
 
@@ -24,6 +25,7 @@ export const useUserStore = defineStore('user', {
         data,
       })
     },
+
     async getUser() {
       const { $axios } = useNuxtApp()
 
@@ -36,6 +38,45 @@ export const useUserStore = defineStore('user', {
       this.$state.name = res.data.name
       this.$state.image = res.data.image
       this.$state.bio = res.data.bio
+    },
+
+    async createPost(data: FormData) {
+      const { $axios } = useNuxtApp()
+
+      return await $axios({
+        url: 'posts/',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        data,
+      })
+    },
+
+    async updateUserImage(data: FormData) {
+      const { $axios } = useNuxtApp()
+
+      return await $axios({
+        url: 'users/upload-image',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        data,
+      })
+    },
+
+    async updateUser(name: string, bio: string) {
+      const { $axios } = useNuxtApp()
+
+      return await $axios({
+        url: 'users/update-profile',
+        method: 'POST',
+        data: {
+          name,
+          bio,
+        },
+      })
     },
 
     async logout() {

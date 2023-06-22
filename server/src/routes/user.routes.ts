@@ -4,6 +4,7 @@ import { getMe, updateProfile, updateProfileImage } from '../controllers/user.co
 import { deserializeUser } from '../middleware/deserializeUser'
 import { requireUser } from '../middleware/requireUser'
 import { validate } from '../middleware/validate'
+import { validateImageUpload } from '../middleware/validateImageUpload'
 import { updateProfileSchema } from '../schemas/user.schema'
 import { imageFilter, storage } from '../utils/multer'
 
@@ -15,6 +16,6 @@ router.use(deserializeUser, requireUser)
 
 router.get('/me', getMe)
 router.post('/update-profile', validate(updateProfileSchema), updateProfile)
-router.post('/upload-image', upload.single('file'), updateProfileImage)
+router.post('/upload-image', upload.single('file'), validateImageUpload, updateProfileImage)
 
 export default router

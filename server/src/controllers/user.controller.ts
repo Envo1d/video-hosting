@@ -1,11 +1,9 @@
 import { NextFunction, Request, Response } from 'express'
 import { unlink } from 'fs'
-import sizeOf from 'image-size'
-import path from 'path'
+import { join } from 'path'
 import { User } from '../entities/user.entity'
 import { UpdateProfileInput } from '../schemas/user.schema'
-import { updateUserImage, updateUserProfile } from '../services/user.service'
-import AppError from '../utils/appError'
+import { getUserImageById, updateUserImage, updateUserProfile } from '../services/user.service'
 
 export const getMe = async (
 	req: Request,
@@ -34,7 +32,7 @@ export const updateProfile = async (
 
 		await updateUserProfile(user.id, {name, bio})
 
-		res.status(201).json({
+		res.status(200).json({
       status: 'success',
     });
 
@@ -50,16 +48,12 @@ export const updateProfileImage = async (
 		try {
 			const user = res.locals.user as User
 
-			const filePath = path.join(__dirname.replace('\\controllers', ''), 'public/images/', req.file?.filename as string)
-
-			const dimensions = sizeOf(filePath)
-
-			if(dimensions.height !== dimensions.width) {
-				unlink(filePath, () => {return next(new AppError(500, 'Server error'))})
-				return next(new AppError(400, 'Incorrect image size'))
+			const oldImage = await getUserImageById(user.id)
+			if(oldImage) {
+				const oldImagePath = join(__dirname.replace('\\controllers', ''), 'public/images/', oldImage?.substring(oldImage.indexOf('/images/')+ ('/images').length+1))
+				unlink(oldImagePath, (err)=> { if(err) throw err })
 			}
-			
-			await updateUserImage(user.id,  process.env.APP_URL+'/images/'+req.file?.filename as string)
+			await updateUserImage(user.id,  process.env.APP_URL+'/images/'+user.image)
 
 			res.status(200).json({
 				status: 'success'

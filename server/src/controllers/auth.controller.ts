@@ -25,9 +25,9 @@ const accessTokenCookieOptions: CookieOptions = {
 const refreshTokenCookieOptions: CookieOptions = {
   ...cookiesOptions,
   expires: new Date(
-    Date.now() + config.get<number>('refreshTokenExpiresIn') * 60 * 1000
+    Date.now() + config.get<number>('refreshTokenExpiresIn') * 24 * 60 * 60 * 1000
   ),
-  maxAge: config.get<number>('refreshTokenExpiresIn') * 60 * 1000,
+  maxAge: config.get<number>('refreshTokenExpiresIn')  * 24 * 60 * 60 * 1000,
 };
 
 export const register = async (

@@ -7,8 +7,9 @@ export const getRandomUsers= async (
 	next: NextFunction
 ) => {
 	try{
-		const suggested = await getRandomAmount(5)
-		const following = await getRandomAmount(10)
+		const user = res.locals.user
+		const suggested = await getRandomAmount(5, user.id)
+		const following = await getRandomAmount(10, user.id)
 
 		res.status(200).json({
 			suggested: suggested,

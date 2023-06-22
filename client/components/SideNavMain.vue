@@ -1,5 +1,7 @@
 <script setup>
+const { $generalStore, $userStore } = useNuxtApp()
 const route = useRoute()
+const router = useRouter()
 </script>
 
 <template>
@@ -16,35 +18,51 @@ const route = useRoute()
 
       <div class="border-b lg:ml-2 mt-2" />
 
-      <div class="lg:block hidden text-xs text-gray-600 font-semibold pt-4 pb-2 px-2">
-        Suggested accounts
+      <div v-if="$userStore.id">
+        <div class="lg:block hidden text-xs text-gray-600 font-semibold pt-4 pb-2 px-2">
+          Suggested accounts
+        </div>
+
+        <div class="lg:hidden block pt-3" />
+
+        <div
+          v-for="sug in $generalStore.suggested"
+        >
+          <div class="cursor-pointer" @click="() => router.push(`/profile/${sug.id}`)">
+            <MenuItemFollow :user="sug" />
+          </div>
+        </div>
+
+        <button class="lg:block hidden text-[#f02c56] pt-1.5 pl-2 text-[13px]">
+          See all
+        </button>
+
+        <div class="border-b lg:ml-2 mt-2" />
+
+        <div class="lg:block hidden text-xs text-gray-600 font-semibold pt-4 pb-2 px-2">
+          Following accounts
+        </div>
+
+        <div class="lg:hidden block pt-3" />
+
+        <div
+          v-for="sug in $generalStore.following"
+        >
+          <div class="cursor-pointer" @click="() => router.push(`/profile/${sug.id}`)">
+            <MenuItemFollow :user="sug" />
+          </div>
+        </div>
+
+        <button class="lg:block hidden text-[#f02c56] pt-1.5 pl-2 text-[13px]">
+          See more
+        </button>
       </div>
 
-      <div class="lg:hidden block pt-3" />
-
-      <div class="cursor-pointer">
-        <MenuItemFollow />
+      <div v-else>
+        <div class="lg:block hidden text-lg text-gray-600 font-semibold pt-4 pb-2 px-2">
+          Login to see suggested and following accounts
+        </div>
       </div>
-
-      <button class="lg:block hidden text-[#f02c56] pt-1.5 pl-2 text-[13px]">
-        See all
-      </button>
-
-      <div class="border-b lg:ml-2 mt-2" />
-
-      <div class="lg:block hidden text-xs text-gray-600 font-semibold pt-4 pb-2 px-2">
-        Following accounts
-      </div>
-
-      <div class="lg:hidden block pt-3" />
-
-      <div class="cursor-pointer">
-        <MenuItemFollow />
-      </div>
-
-      <button class="lg:block hidden text-[#f02c56] pt-1.5 pl-2 text-[13px]">
-        See more
-      </button>
 
       <div class="lg:block hidden border-b lg:ml-2 mt-2" />
 

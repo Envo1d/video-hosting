@@ -2,8 +2,11 @@ require('dotenv').config();
 import config from 'config'
 import express, { NextFunction, Request, Response } from 'express'
 import authRouter from './routes/auth.routes'
+import commentRouter from './routes/comment.routes'
 import globalRouter from './routes/global.routes'
+import likeRouter from './routes/like.routes'
 import postRouter from './routes/post.routes'
+import profileRouter from './routes/profile.routes'
 import userRouter from './routes/user.routes'
 import AppError from './utils/appError'
 import redisClient from './utils/connectRedis'
@@ -25,7 +28,8 @@ AppDataSource.initialize()
     app.use(express.static(path.join(__dirname, 'public')))
     
     // 1. Body parser
-    app.use(express.json({limit: '10kb'}))
+    app.use(express.json())
+    app.use(express.urlencoded({extended: true}))
 
     // 2. Logger
     if(process.env.NODE_ENV==='development') app.use(morgan('dev'))
@@ -46,6 +50,9 @@ AppDataSource.initialize()
     app.use('/api/users', userRouter);
     app.use('/api/global', globalRouter);
     app.use('/api/posts', postRouter);
+    app.use('/api/profile', profileRouter);
+    app.use('/api/comments', commentRouter);
+    app.use('/api/likes', likeRouter);
 
     // HEALTH CHECKER
     app.get('/api/healthchecker', async (_, res: Response) => {

@@ -6,6 +6,8 @@ import 'vue-advanced-cropper/dist/style.css'
 const { $userStore, $generalStore, $profileStore } = useNuxtApp()
 const { name, bio, image } = storeToRefs($userStore)
 
+const route = useRoute()
+
 const uploadedImage = ref(null)
 const userName = ref(null)
 const userBio = ref(null)
@@ -25,6 +27,50 @@ function getUploadedImage(e) {
   uploadedImage.value = URL.createObjectURL(file.value)
 }
 
+async function cropAndUpdateImage() {
+  const { coordinates } = cropper.value.getResult()
+
+  const data = new FormData()
+  data.append('file', file.value || '')
+  data.append('height', coordinates.height || 0)
+  data.append('width', coordinates.width || 0)
+  data.append('top', coordinates.top || 0)
+  data.append('left', coordinates.left || 0)
+
+  try {
+    await $userStore.updateUserImage(data)
+    await $userStore.getUser()
+    await $profileStore.getProfile(route.params.id)
+
+    $generalStore.updateSideMenuImage($generalStore.suggested, $userStore)
+    $generalStore.updateSideMenuImage($generalStore.following, $userStore)
+
+    userImage.value = image.value
+    uploadedImage.value = null
+  }
+  catch (error) {
+    console.error(error)
+  }
+}
+
+async function updateUserInfo() {
+  try {
+    await $userStore.updateUser(userName.value, userBio.value)
+    await $userStore.getUser()
+    await $profileStore.getProfile(route.params.id)
+
+    userName.value = name.value
+    userBio.value = bio.value
+
+    setTimeout(() => {
+      $generalStore.isEditProfileOpen = false
+    }, 100)
+  }
+  catch (error) {
+    console.error(error)
+  }
+}
+
 watch(() => userName.value, () => {
   if (!userName.value || userName.value === name.value)
     isUpdated.value = false
@@ -32,7 +78,7 @@ watch(() => userName.value, () => {
 })
 
 watch(() => userBio.value, () => {
-  if (!userBio.value || userBio.value.length < 1)
+  if (!userName.value || userBio.value.length < 1)
     isUpdated.value = false
   else isUpdated.value = true
 })
@@ -71,7 +117,7 @@ watch(() => userBio.value, () => {
                 <img
                   class="rounded-full"
                   width="95"
-                  src="https://picsum.photos/id/8/300/320"
+                  :src="userImage"
                 >
                 <div class="absolute bottom-0 right-0 rounded-full bg-white shadow-xl border p-1 border-gray-300 inline-block w-[32px]">
                   <Icon size="17" class="-mt-1 ml-0.5" name="ph:pencil-simple-line-bold" />
@@ -156,6 +202,28 @@ watch(() => userBio.value, () => {
           <button
             class="flex items-center border rounded-sm px-3 py-[6px] hover:bg-gray-100"
             @click="() => $generalStore.isEditProfileOpen = false"
+          >
+            <span class="px-2 font-medium text-[15px]">Cancel</span>
+          </button>
+
+          <button
+            class="flex items-center text-white border rounded-ms ml-3 px-3 py-[6px]"
+            :disabled="!isUpdated"
+            :class="!isUpdated ? 'bg-gray-200' : 'bg-[#f02c56]'"
+            @click="updateUserInfo()"
+          >
+            <span class="mx-4 font-medium text-[15px]">Apply</span>
+          </button>
+        </div>
+
+        <div
+          v-else
+          id="CropperButtons"
+          class="flex items-center justify-end"
+        >
+          <button
+            class="flex items-center border rounded-sm px-3 py-[6px] hover:bg-gray-100"
+            @click="() => uploadedImage = null"
           >
             <span class="px-2 font-medium text-[15px]">Cancel</span>
           </button>

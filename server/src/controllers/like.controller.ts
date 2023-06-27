@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
+import { User } from '../entities/user.entity'
 import { CreateLikeInput, DeleteLikeInput } from '../schemas/like.schema'
 import { createLikeForPost, deleteLikeForPost, getLikeByIdForPost } from '../services/like.service'
 import AppError from '../utils/appError'
@@ -9,17 +10,14 @@ export const addLike = async (
 	next: NextFunction
 ) => {
 	try{
-		const { postId, userId } = req.body
+		const { postId } = req.body
+		const user = res.locals.user as User
 
-		const like = await createLikeForPost(userId, postId)
+		const like = await createLikeForPost(user.id, postId)
 
 		res.status(200).json({
 			status: 'success',
-			like: {
-				id: like.id,
-				postId: like.postId,
-				userId: like.userId
-			}
+			like
 		})
 	}catch(error)
 	{
@@ -43,11 +41,7 @@ export const removeLike = async (
 
 		res.status(200).json({
 			status: 'success',
-			like: {
-				id: like.id,
-				postId: like.postId,
-				userId: like.userId
-			}
+			like
 		})}
 		else return next(new AppError(400, 'Like not found'))
 	}catch(error)

@@ -12,7 +12,7 @@ export const addComment = async (
 		const user = res.locals.user as User
 		const { postId, text } = req.body
 
-		await createComment(user.id, postId, text)
+		console.log(await createComment(user.id, postId, text))
 
 		res.status(200).json({
 			status: 'success'

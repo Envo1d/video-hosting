@@ -1,5 +1,4 @@
 import { Column, Entity, ManyToOne } from "typeorm"
-import { Comment } from './comment.entity'
 import Model from './model.entity'
 import { Post } from './post.entity'
 import { User } from './user.entity'
@@ -18,9 +17,9 @@ export class Like extends Model {
 		@Column()
 		postId: string
 
-		@ManyToOne(() => Comment, (comment) => comment.likes, {onDelete: 'CASCADE'})
-		comment: Comment
+		// @ManyToOne(() => Comment, (comment) => comment.likes, {onDelete: 'CASCADE'})
+		// comment: Comment
 
-		@Column()
-		commentId: string
+		// @Column()
+		// commentId: string
 }

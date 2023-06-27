@@ -15,6 +15,19 @@ export const deleteLikeForPost = async (likeId: string) => {
 	})
 }
 
+export const getLikesByPostId = async (postId: string) => {
+	return await likeRepo.find({
+		where: {
+			id: postId
+		},
+		select: {
+			id: true,
+			postId: true,
+			userId: true
+		}
+	})
+}
+
 export const getLikeByIdForPost = async (likeId: string) => {
 	return await likeRepo.findOne({
 		where: {

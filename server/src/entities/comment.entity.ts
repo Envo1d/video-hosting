@@ -1,5 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany } from "typeorm"
-import { Like } from './like.entity'
+import { Column, Entity, ManyToOne } from "typeorm"
 import Model from './model.entity'
 import { Post } from './post.entity'
 import { User } from './user.entity'
@@ -21,12 +20,12 @@ export class Comment extends Model {
 		@Column()
 		postId: string
 
-		@OneToMany(() => Like, (like) => like.user)
-    likes: Like[]
+		// @OneToMany(() => Like, (like) => like.user)
+    // likes: Like[]
 
-		@ManyToOne((type) => Comment, (comment) => comment.childComments)
-    parentComment: Comment
+		// @ManyToOne(() => Comment, (comment) => comment.childComments)
+    // parentComment: Comment
 
-    @OneToMany((type) => Comment, (comment) => comment.parentComment)
-    childComments: Comment[]
+    // @OneToMany(() => Comment, (comment) => comment.parentComment)
+    // childComments: Comment[]
 }

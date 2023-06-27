@@ -8,6 +8,6 @@ import { createCommentSchema, deleteCommentSchema } from '../schemas/comment.sch
 const router = Router()
 
 router.post('/', deserializeUser, requireUser, validate(createCommentSchema), addComment)
-router.delete('/delete', deserializeUser, requireUser, validate(deleteCommentSchema), removeComment)
+router.delete('/', deserializeUser, requireUser, validate(deleteCommentSchema), removeComment)
 
 export default router

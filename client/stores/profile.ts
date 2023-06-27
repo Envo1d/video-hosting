@@ -1,4 +1,15 @@
 import { defineStore } from 'pinia'
+import type { IPost } from '~/types/post.interface'
+
+interface RootState {
+  id: string
+  name: string
+  bio: string
+  image: string
+  post: IPost | null
+  posts: IPost[] | null
+  allLikes: number
+}
 
 export const useProfileStore = defineStore('profile', {
   state: () => ({
@@ -9,7 +20,7 @@ export const useProfileStore = defineStore('profile', {
     post: null,
     posts: null,
     allLikes: 0,
-  }),
+  } as RootState),
   actions: {
     async getProfile(userId: string) {
       const { $axios } = useNuxtApp()
@@ -29,6 +40,18 @@ export const useProfileStore = defineStore('profile', {
       this.$state.bio = res.data.user.bio
       this.$state.image = res.data.user.image
       this.$state.posts = res.data.posts
+
+      this.allLikesCount()
+    },
+
+    allLikesCount() {
+      this.allLikes = 0
+      if (this.posts !== null) {
+        for (let i = 0; i < this.posts.length; i++) {
+          const post = this.posts[i]
+          this.allLikes += post.likes.length
+        }
+      }
     },
 
     resetUser() {

@@ -23,3 +23,16 @@ export interface IUserResponse {
   status: string
   data: IUser
 }
+
+export interface IHomeResponse {
+  posts: {
+    id: string
+    videoUrl: string
+    text: string
+    user: {
+      id: string
+      name: string
+      image: string
+    }
+  }
+}

@@ -10,6 +10,8 @@ const error = ref(null)
 const isUploading = ref(false)
 const router = useRouter()
 
+definePageMeta({ middleware: 'auth' })
+
 watch(() => caption.value, (caption) => {
   if (caption.length >= 150) {
     errorType.value = 'caption'

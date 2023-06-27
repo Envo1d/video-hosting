@@ -7,6 +7,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       apiUrl: process.env.API_URL,
+      appUrl: process.env.APP_URL,
     },
   },
   postcss: {

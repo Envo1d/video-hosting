@@ -7,7 +7,7 @@ import { createLikeSchema, deleteLikeSchema } from '../schemas/like.schema'
 
 const router = Router()
 
-router.post('/create', deserializeUser, requireUser, validate(createLikeSchema), addLike)
-router.delete('/delete', deserializeUser, requireUser, validate(deleteLikeSchema), removeLike)
+router.post('/', deserializeUser, requireUser, validate(createLikeSchema), addLike)
+router.delete('/', deserializeUser, requireUser, validate(deleteLikeSchema), removeLike)
 
 export default router

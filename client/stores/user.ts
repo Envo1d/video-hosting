@@ -1,5 +1,7 @@
 import { defineStore } from 'pinia'
 import type { IAuthResponse, ILoginData, IRegisterData } from '~/types/auth.interface'
+import type { ILike, IPost } from '~/types/post.interface'
+import { useGeneralStore } from './general'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -51,6 +53,124 @@ export const useUserStore = defineStore('user', {
         },
         data,
       })
+    },
+
+    async deletePost(post: IPost) {
+      const { $axios } = useNuxtApp()
+
+      return await $axios({
+        url: 'posts/',
+        method: 'DELETE',
+        params: {
+          id: post.id,
+        },
+      })
+    },
+
+    async likePost(post: any, isPostPage: boolean) {
+      const { $axios } = useNuxtApp()
+
+      const res = await $axios({
+        url: 'likes/',
+        method: 'POST',
+        data: {
+          postId: post.id,
+        },
+      })
+
+      let singlePost = null
+
+      if (isPostPage)
+        singlePost = post
+      else
+        singlePost = useGeneralStore()?.posts?.find(p => p.id === post.id)
+
+      singlePost.likes.push(res.data.like)
+    },
+
+    async unlikePost(post: any, isPostPage: boolean) {
+      const { $axios } = useNuxtApp()
+
+      let singlePost = null
+      let deleteLike: ILike = { userId: '', postId: '', id: '' }
+
+      if (isPostPage)
+        singlePost = post
+      else
+        singlePost = useGeneralStore()?.posts?.find(p => p.id === post.id)
+
+      singlePost.likes.forEach((like: ILike) => {
+        if (like.userId === this.id)
+          deleteLike = like
+      })
+
+      if (deleteLike.id) {
+        const res = await $axios({
+          url: 'likes/',
+          method: 'DELETE',
+          data: {
+            id: deleteLike.id,
+          },
+        })
+
+        for (let i = 0; i < singlePost.likes.length; i++) {
+          const like = singlePost.likes[i]
+          if (like.id === res.data.like.id)
+            singlePost.likes.splice(i, 1)
+        }
+      }
+    },
+
+    async addComment(post: IPost, comment: string) {
+      const { $axios } = useNuxtApp()
+
+      const res = await $axios({
+        url: 'comments/',
+        method: 'POST',
+        data: {
+          postId: post.id,
+          text: comment,
+        },
+      })
+
+      if (res.status === 200)
+        await this.updateComments(post)
+    },
+
+    async deleteComment(post: IPost, commentId: string) {
+      const { $axios } = useNuxtApp()
+
+      const res = await $axios({
+        url: 'comments/',
+        method: 'DELETE',
+        data: {
+          id: commentId,
+        },
+      })
+
+      if (res.status === 200)
+        await this.updateComments(post)
+    },
+
+    async updateComments(post: IPost) {
+      const { $axios, $generalStore } = useNuxtApp()
+
+      const res = await $axios({
+        url: 'profile/',
+        method: 'GET',
+        params: {
+          id: post.user.id,
+        },
+      })
+
+      for (let i = 0; i < res.data.posts.length; i++) {
+        const updatePost = res.data.posts[i]
+
+        if (post.id === updatePost.id) {
+          if ($generalStore.selectedPost)
+            $generalStore.selectedPost.comments = updatePost.comments
+        }
+      }
     },
 
     async updateUserImage(data: FormData) {

@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
+import { getByPostId } from '../services/comment.service'
 import { getByUserId } from '../services/post.service'
 import { getFullUser } from '../services/user.service'
 import AppError from '../utils/appError'
@@ -13,6 +14,14 @@ export const show = async (
 			if(id)
 			{
 				const posts = await getByUserId(id as string)
+
+				// FIXME: comments
+
+				for (let i = 0; i < posts.length; i++) {
+					const post = posts[i]
+					post.comments = await getByPostId(post.id)					
+				}
+				
 				const user = await getFullUser(id as string)
 
 				res.status(200).json({

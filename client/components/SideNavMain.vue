@@ -46,10 +46,10 @@ const router = useRouter()
         <div class="lg:hidden block pt-3" />
 
         <div
-          v-for="sug in $generalStore.following"
+          v-for="fol in $generalStore.following"
         >
-          <div class="cursor-pointer" @click="() => router.push(`/profile/${sug.id}`)">
-            <MenuItemFollow :user="sug" />
+          <div class="cursor-pointer" @click="() => router.push(`/profile/${fol.id}`)">
+            <MenuItemFollow :user="fol" />
           </div>
         </div>
 

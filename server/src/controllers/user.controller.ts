@@ -49,9 +49,8 @@ export const updateProfileImage = async (
 			const user = res.locals.user as User
 
 			const oldImage = await getUserImageById(user.id)
-			if(oldImage) {
-				const oldImagePath = join(__dirname.replace('\\controllers', ''), 'public/images/', oldImage?.substring(oldImage.indexOf('/images/')+ ('/images').length+1))
-				unlink(oldImagePath, (err)=> { if(err) throw err })
+			if(oldImage && !oldImage?.includes('default.jpg')) {
+				unlink(join(__dirname.replace('\\controllers', ''), 'public', oldImage.substring(oldImage.indexOf('/images/'))), (err)=> { if(err) throw err })
 			}
 			await updateUserImage(user.id,  process.env.APP_URL+'/images/'+user.image)
 

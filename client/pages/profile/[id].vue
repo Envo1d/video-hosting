@@ -3,7 +3,7 @@ import { storeToRefs } from 'pinia'
 
 const { $generalStore, $profileStore, $userStore } = useNuxtApp()
 
-const { posts } = storeToRefs($profileStore)
+const { posts, allLikes } = storeToRefs($profileStore)
 
 const route = useRoute()
 
@@ -14,7 +14,7 @@ onMounted(async () => {
     await $profileStore.getProfile(route.params.id)
   }
   catch (error) {
-    console.log(error)
+    console.error(error)
   }
 })
 
@@ -63,7 +63,7 @@ watch(() => posts.value, () => {
           <span class="text-gray-500 font-light text-[15px] pl-1.5">Followers</span>
         </div>
         <div class="mr-4">
-          <span class="font-bold">3k</span>
+          <span class="font-bold">{{ allLikes }}</span>
           <span class="text-gray-500 font-light text-[15px] pl-1.5">Likes</span>
         </div>
       </div>

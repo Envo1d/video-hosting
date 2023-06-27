@@ -9,9 +9,10 @@ services:
       - progresDB:/var/lib/postgresql/data
     env_file:
       - ./.env
+    command: ["postgres", "-c", "log_statement=all"]
 
   redis:
-    image: redis:alpine
+    image: redis:latest
     container_name: redis
     ports:
       - '6379:6379'

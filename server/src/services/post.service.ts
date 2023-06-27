@@ -11,15 +11,40 @@ export const createPost = async (userId: string, videoUrl: string, text: string)
 
 export const getAll = async () => {
   return await postRepo.find({
+    relations: ['user', 'likes'],
     order: {
       created_at: 'DESC'
+    },
+    select: {
+      id: true,
+      text: true,
+      videoUrl: true,
+      user: {
+        id: true,
+        name: true,
+        image: true
+      },
+      likes: {
+        id: true,
+        userId: true
+      },
+      reposts: true
+    }
+  })
+}
+
+export const getPostIdsByUserId = async(userId: string)=> {
+  return await postRepo.find({
+    where: {user: {id: userId}},
+    select: {
+      id: true,
     }
   })
 }
 
 export const getByUserId = async(userId: string) => {
   return await postRepo.find({
-    relations: ['user'],
+    relations: ['user', 'likes'],
     where: {user: {id: userId}},
     select: {
       id: true,
@@ -28,6 +53,11 @@ export const getByUserId = async(userId: string) => {
       user: {
         id: true,
       },
+      likes: {
+        id: true,
+        userId: true,
+      },
+      reposts: true
     },
     order: {
       created_at: 'DESC'
@@ -46,11 +76,19 @@ export const getByIdAndUserId = async (id: string, userId: string) => {
   })
 }
 
+export const updateRepostsCounter = async (id: string) => {
+  return await AppDataSource.createQueryBuilder()
+  .update(Post)
+  .where({ id: id })
+  .set({reposts: ()=> "reposts + 1"})
+  .execute()
+}
+
 export const getById = async (id: string) => {
   return await postRepo.findOne({
-    relations: ['user'],
+    relations: ['user', 'likes'],
     where: {id: id},
-    select:{
+    select: {
       id: true,
       text: true,
       videoUrl: true,
@@ -58,34 +96,14 @@ export const getById = async (id: string) => {
       user: {
         id: true,
         name: true,
-        image: true,
-      },
-      comments: {
-        id: true,
-        text: true,
-        likes: true,
-        childComments: {
-          id: true,
-          text: true,
-          likes: true,
-          user: {
-            id: true,
-            name: true,
-            image: true
-          }
-        },
-        user: {
-          id: true,
-          name: true,
-          image: true
-        }
+        image: true
       },
       likes: {
         id: true,
         userId: true,
-        postId: true
-      }
-    }
+      },
+      reposts: true
+    },
   })
 }
 

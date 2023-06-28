@@ -11,9 +11,11 @@ const router = useRouter()
   >
     <div class="lg:w-full w-[55px] mx-auto">
       <NuxtLink to="/">
-        <MenuItem icon-string="For You" color-string="#f02c56" size-string="30" />
+        <MenuItem icon-string="For You" :color-string="route.path === '/' ? '#f02c56' : '#000000'" size-string="30" />
       </NuxtLink>
-      <MenuItem icon-string="Following" color-string="#000000" size-string="27" />
+      <NuxtLink to="/following">
+        <MenuItem icon-string="Following" :color-string="route.path === '/following' ? '#f02c56' : '#000000'" size-string="27" />
+      </NuxtLink>
       <MenuItem icon-string="LIVE" color-string="#000000" size-string="27" />
 
       <div class="border-b lg:ml-2 mt-2" />

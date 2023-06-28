@@ -26,11 +26,15 @@ async function copyLink(id) {
   }
 }
 
-const isLiked = computed(() => {
-  const res = post.value.likes.find(like => like.userId === $userStore.id)
-  if (res)
-    return true
-  return false
+const postState = computed(() => {
+  let like = post.value.likes.find(like => like.userId === $userStore.id)
+  if (like)
+    like = true
+  else like = false
+
+  const follow = $userStore.subscriptions.includes(post.value.user.id)
+
+  return { like, follow }
 })
 
 async function likePost(post) {
@@ -72,12 +76,12 @@ onMounted(() => {
 onBeforeUnmount(() => {
   video.value.pause()
   video.value.currentTime = 0
-  video.value.src = 0
+  video.value.src = ''
 })
 </script>
 
 <template>
-  <div :id="`PostMain-${post.id}`" class="flex border-b py-6">
+  <div v-if="post.user" :id="`PostMain-${post.id}`" class="flex border-b py-6">
     <div class="cursor-pointer" @click="router.push(`/profile/${post.user.id}`)">
       <img :src="post.user.image" class="rounded-full max-h-[60px]" width="60">
     </div>
@@ -91,7 +95,7 @@ onBeforeUnmount(() => {
         </button>
 
         <button
-          v-if="post.user.id !== $userStore.id"
+          v-if="post.user.id !== $userStore.id && !postState.follow"
           class="border text-[15px] px-[21px] py-0.5 border-[#f02c56] text-[#f02c56] hover:bg-[#ffeef2] font-semibold rounded-md"
         >
           Follow
@@ -129,9 +133,9 @@ onBeforeUnmount(() => {
             <div class="pb-4 text-center">
               <button
                 class="rounded-full bg-gray-200 p-2 cursor-pointer"
-                @click="() => isLiked ? unlikePost(post) : likePost(post)"
+                @click="() => postState.like ? unlikePost(post) : likePost(post)"
               >
-                <Icon name="mdi:heart" size="25" :color="isLiked ? '#f02c56' : ''" />
+                <Icon name="mdi:heart" size="25" :color="postState.like ? '#f02c56' : ''" />
               </button>
               <span class="text-xs text-gray-800 font-semibold">{{ post.likes.length }}</span>
             </div>

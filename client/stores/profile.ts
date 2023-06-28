@@ -9,6 +9,8 @@ interface RootState {
   post: IPost | null
   posts: IPost[] | null
   allLikes: number
+  following: number
+  followers: number
 }
 
 export const useProfileStore = defineStore('profile', {
@@ -20,6 +22,8 @@ export const useProfileStore = defineStore('profile', {
     post: null,
     posts: null,
     allLikes: 0,
+    following: 0,
+    followers: 0,
   } as RootState),
   actions: {
     async getProfile(userId: string) {
@@ -40,6 +44,8 @@ export const useProfileStore = defineStore('profile', {
       this.$state.bio = res.data.user.bio
       this.$state.image = res.data.user.image
       this.$state.posts = res.data.posts
+      this.following = res.data.user.subscriptions
+      this.followers = res.data.user.subscribers
 
       this.allLikesCount()
     },
@@ -60,6 +66,8 @@ export const useProfileStore = defineStore('profile', {
       this.$state.bio = ''
       this.$state.image = ''
       this.$state.posts = null
+      this.$state.subscribers = 0
+      this.$state.subscriptions = 0
     },
   },
   persist: true,

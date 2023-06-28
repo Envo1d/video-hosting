@@ -1,4 +1,5 @@
 export default {
+  nodeEnv: 'NODE_ENV',
   port: 'PORT',
   appUrl: 'APP_URL',
   postgresConfig: {

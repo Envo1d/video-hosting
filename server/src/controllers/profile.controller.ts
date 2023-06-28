@@ -22,7 +22,8 @@ export const show = async (
 					post.comments = await getByPostId(post.id)					
 				}
 				
-				const user = await getFullUser(id as string)
+				const users = await getFullUser(id as string)
+				const user = users[0]
 
 				res.status(200).json({
 					posts: posts,
@@ -30,7 +31,9 @@ export const show = async (
 						id: user?.id,
 						bio: user?.bio,
 						name: user?.name,
-						image: user?.image
+						image: user?.image,
+						subscribers: user?.subscribers.length,
+						subscriptions: user?.subscriptions.length
 					}
 				})
 			}

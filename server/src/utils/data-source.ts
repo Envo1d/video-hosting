@@ -14,7 +14,7 @@ const postgresConfig = config.get<{
 export const AppDataSource = new DataSource({
   ...postgresConfig,
   type: 'postgres',
-  synchronize: true,
+  synchronize: config.get<string>('nodeEnv') === 'development',
   logging: false,
   entities: ['src/entities/**/*.entity{.ts,.js}'],
   migrations: ['src/migrations/**/*{.ts,.js}'],

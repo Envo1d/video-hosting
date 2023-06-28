@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { getRandomAmount } from '../services/user.service'
+import { getFollowing, getSuggested } from '../services/subscription.service'
 
 export const getRandomUsers= async (
 	req: Request,
@@ -8,12 +8,12 @@ export const getRandomUsers= async (
 ) => {
 	try{
 		const user = res.locals.user
-		const suggested = await getRandomAmount(5, user.id)
-		const following = await getRandomAmount(10, user.id)
+		const suggested = await getSuggested(5, user.id)
+		const following = await getFollowing(10, user.id)
 
 		res.status(200).json({
 			suggested: suggested,
-			following: following
+			following: following.map(fol=>fol.subscribedTo)
 		})
 	}catch(error)
 	{

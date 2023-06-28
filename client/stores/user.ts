@@ -3,6 +3,16 @@ import type { IAuthResponse, ILoginData, IRegisterData } from '~/types/auth.inte
 import type { ILike, IPost } from '~/types/post.interface'
 import { useGeneralStore } from './general'
 
+interface RootState {
+  id: string
+  name: string
+  email: string
+  bio: string
+  image: string
+  subscriptions: string[] | null
+  subscribers: string[] | null
+}
+
 export const useUserStore = defineStore('user', {
   state: () => ({
     id: '',
@@ -10,7 +20,9 @@ export const useUserStore = defineStore('user', {
     email: '',
     bio: '',
     image: '',
-  }),
+    subscribers: null,
+    subscriptions: null,
+  } as RootState),
   actions: {
     async getTokens() {
       const { $axios } = useNuxtApp()
@@ -40,6 +52,32 @@ export const useUserStore = defineStore('user', {
       this.$state.name = res.data.name
       this.$state.image = res.data.image
       this.$state.bio = res.data.bio
+      this.$state.subscribers = res.data.subscribers
+      this.$state.subscriptions = res.data.subscriptions
+    },
+
+    async follow(id: string) {
+      const { $axios } = useNuxtApp()
+
+      await $axios({
+        url: 'subscription/',
+        method: 'POST',
+        data: {
+          id,
+        },
+      })
+    },
+
+    async unfollow(id: string) {
+      const { $axios } = useNuxtApp()
+
+      await $axios({
+        url: 'subscription/',
+        method: 'DELETE',
+        data: {
+          id,
+        },
+      })
     },
 
     async createPost(data: FormData) {

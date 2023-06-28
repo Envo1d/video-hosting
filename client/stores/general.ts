@@ -9,6 +9,7 @@ interface RootState {
   ids: string[] | null
   isBackUrl: string
   posts: IPost[] | null
+  followingPosts: IPost[] | null
   suggested: null
   following: null
   notificationType: null | string
@@ -102,6 +103,17 @@ export const useGeneralStore = defineStore('general', {
       })
 
       this.posts = res.data.posts
+    },
+
+    async getAllFollowingUsersAndPosts() {
+      const { $axios } = useNuxtApp()
+
+      const res = await $axios({
+        url: '/subscription/following-posts',
+        method: 'GET',
+      })
+
+      this.followingPosts = res.data.posts
     },
 
     async updateReposts(postId: string) {

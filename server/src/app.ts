@@ -7,6 +7,7 @@ import globalRouter from './routes/global.routes'
 import likeRouter from './routes/like.routes'
 import postRouter from './routes/post.routes'
 import profileRouter from './routes/profile.routes'
+import subRouter from './routes/subscription.routes'
 import userRouter from './routes/user.routes'
 import AppError from './utils/appError'
 import redisClient from './utils/connectRedis'
@@ -53,6 +54,7 @@ AppDataSource.initialize()
     app.use('/api/profile', profileRouter);
     app.use('/api/comments', commentRouter);
     app.use('/api/likes', likeRouter);
+    app.use('/api/subscription', subRouter)
 
     // HEALTH CHECKER
     app.get('/api/healthchecker', async (_, res: Response) => {

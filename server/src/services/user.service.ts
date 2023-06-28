@@ -26,15 +26,6 @@ export const updateUserImage = async (userId: string, imageUrl: string) => {
   }, {image: imageUrl})
 }
 
-export const getRandomAmount = async (amount: number, excludeUserId: string) => {
-  return await userRepo.createQueryBuilder('user')
-  .select()
-  .where('user.id != :id', {id: excludeUserId})
-  .orderBy('RANDOM()')
-  .take(amount)
-  .getMany()
-}
-
 export const findUserByEmail = async ({ email }: { email: string }) => {
   return await userRepo.findOneBy({ email });
 };
@@ -48,8 +39,8 @@ export const getUserImageById = async (userId: string) => {
 }
 
 export const getFullUser = async (userId:string) =>{
-  return await userRepo.findOne({
-    relations: ['posts'],
+  return await userRepo.find({
+    relations: ['posts', 'subscriptions', 'subscribers'],
     where: {
       id: userId
     },
@@ -62,6 +53,12 @@ export const getFullUser = async (userId:string) =>{
         likes: {
           id: true
         }
+      },
+      subscriptions : {
+        subscribedToId: true
+      },
+      subscribers: {
+        subscriberId: true
       }
     }
   })

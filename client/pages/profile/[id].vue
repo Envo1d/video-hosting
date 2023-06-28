@@ -9,6 +9,28 @@ const route = useRoute()
 
 const show = ref(false)
 
+const isFollow = computed(() => {
+  const res = $userStore.subscriptions.includes(route.params.id)
+
+  if (res)
+    return true
+  return false
+})
+
+async function actionUser(type) {
+  try {
+    if (type === 'follow')
+      await $userStore.follow(route.params.id)
+    else await $userStore.unfollow(route.params.id)
+    await $userStore.getUser()
+    await $generalStore.getRandomUsers()
+    await $profileStore.getProfile(route.params.id)
+  }
+  catch (error) {
+    console.error(error)
+  }
+}
+
 onMounted(async () => {
   try {
     await $profileStore.getProfile(route.params.id)
@@ -47,19 +69,30 @@ watch(() => posts.value, () => {
             <Icon class="mt-0.5 mr-1" name="mdi:pencil" size="18" />
             <div>Edit profile</div>
           </button>
-          <button v-else class="flex items-center rounded-md py-1.5 px-8 mt-3 text-[15px] text-white font-semibold bg-[#f02c56]">
-            Follow
-          </button>
+          <div v-else>
+            <button
+              v-if="!isFollow"
+              class="flex items-center rounded-md py-1.5 px-8 mt-3 text-[15px] text-white font-semibold bg-[#f02c56]" @click="actionUser('follow')"
+            >
+              Follow
+            </button>
+            <button
+              v-else
+              class="flex item-center rounded-md py-1.5 px-3.5 mt-3 text-[15px] font-semibold border hover:bg-gray-100" @click="actionUser('unfollow')"
+            >
+              Unfollow
+            </button>
+          </div>
         </div>
       </div>
 
       <div class="flex items-center pt-4">
         <div class="mr-4">
-          <span class="font-bold">10k</span>
+          <span class="font-bold">{{ $profileStore.following }}</span>
           <span class="text-gray-500 font-light text-[15px] pl-1.5">Following</span>
         </div>
         <div class="mr-4">
-          <span class="font-bold">44k</span>
+          <span class="font-bold">{{ $profileStore.followers }}</span>
           <span class="text-gray-500 font-light text-[15px] pl-1.5">Followers</span>
         </div>
         <div class="mr-4">

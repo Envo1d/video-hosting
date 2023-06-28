@@ -3,7 +3,7 @@ import { unlink } from 'fs'
 import { join } from 'path'
 import { User } from '../entities/user.entity'
 import { UpdateProfileInput } from '../schemas/user.schema'
-import { getUserImageById, updateUserImage, updateUserProfile } from '../services/user.service'
+import { getFullUser, getUserImageById, updateUserImage, updateUserProfile } from '../services/user.service'
 
 export const getMe = async (
 	req: Request,
@@ -11,10 +11,16 @@ export const getMe = async (
 	next: NextFunction
 )=>{
 	try {
-		const user = res.locals.user as User;
-
+		const userId = res.locals.user.id;
+		const users = await getFullUser(userId)
+		const user = users[0]
 		res.status(200).json({
-			...user
+				id: user?.id,
+				name: user?.name,
+				image: user?.image,
+				bio: user?.bio,
+				subscribers: user?.subscribers.map(sub=>sub.subscriberId),
+				subscriptions: user?.subscriptions.map(sub=>sub.subscribedToId)
 		});
 	} catch (error) {
 		next(error);

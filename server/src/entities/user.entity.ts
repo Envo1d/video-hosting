@@ -4,6 +4,7 @@ import { Comment } from './comment.entity'
 import { Like } from './like.entity'
 import Model from './model.entity'
 import { Post } from './post.entity'
+import { Subscription } from './subscription.entity'
 
 @Entity('users')
 export class User extends Model {
@@ -31,6 +32,12 @@ export class User extends Model {
 
     @OneToMany(() => Like, (like) => like.user)
     likes: Like[]
+
+    @OneToMany(type => Subscription, subscription => subscription.subscriber)
+    subscriptions: Subscription[];
+  
+    @OneToMany(type => Subscription, subscription => subscription.subscribedTo)
+    subscribers: Subscription[];
 
     toJSON() {
       return { ...this, password: undefined};

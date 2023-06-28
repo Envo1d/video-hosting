@@ -1,5 +1,8 @@
 <script setup>
+import { storeToRefs } from 'pinia'
+
 const { $generalStore, $userStore, $profileStore } = useNuxtApp()
+const { selectedPost } = storeToRefs($generalStore)
 
 const isLoaded = ref(true)
 const video = ref(null)
@@ -136,6 +139,10 @@ onMounted(async () => {
 
   try {
     await $generalStore.getPostById(route.params.id)
+    useSeoMeta({
+      title: `${selectedPost.value.text}`,
+      ogTitle: `${selectedPost.value.text}`,
+    })
   }
   catch (error) {
     if (error && error.response.status === 400)

@@ -1,6 +1,13 @@
 <script setup>
 const { $generalStore } = useNuxtApp()
 
+definePageMeta({ middleware: 'auth' })
+
+useSeoMeta({
+  title: 'Following Page',
+  ogTitle: 'Following Page',
+})
+
 onMounted(async () => {
   try {
     await $generalStore.getAllFollowingUsersAndPosts()

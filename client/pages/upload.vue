@@ -10,6 +10,10 @@ const error = ref(null)
 const isUploading = ref(false)
 const router = useRouter()
 
+useSeoMeta({
+  title: 'Upload Page',
+  ogTitle: 'Upload Page',
+})
 definePageMeta({ middleware: 'auth' })
 
 watch(() => caption.value, (caption) => {

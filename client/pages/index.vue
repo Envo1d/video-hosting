@@ -1,5 +1,10 @@
-<script setup>
+<script setup lang='ts'>
 const { $generalStore } = useNuxtApp()
+
+useSeoMeta({
+  title: 'Home Page',
+  ogTitle: 'Home Page',
+})
 
 onMounted(async () => {
   try {

@@ -250,6 +250,8 @@ export const useUserStore = defineStore('user', {
       this.$state.email = ''
       this.$state.bio = ''
       this.$state.image = ''
+      this.$state.subscribers = null
+      this.$state.subscriptions = null
     },
   },
   persist: true,

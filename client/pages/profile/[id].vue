@@ -3,9 +3,14 @@ import { storeToRefs } from 'pinia'
 
 const { $generalStore, $profileStore, $userStore } = useNuxtApp()
 
-const { posts, allLikes } = storeToRefs($profileStore)
+const { posts, allLikes, name } = storeToRefs($profileStore)
 
 const route = useRoute()
+
+useSeoMeta({
+  title: `${name.value} Profile`,
+  ogTitle: `${name.value} Profile`,
+})
 
 const show = ref(false)
 
@@ -115,7 +120,7 @@ watch(() => posts.value, () => {
       </div>
 
       <div class="mt-4 grid 2xl:grid-cols-6 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-3">
-        <div v-for="post in $profileStore.posts" v-if="show">
+        <div v-for="post in $profileStore.posts" v-if="show" :key="post.id">
           <PostUser :post="post" />
         </div>
       </div>

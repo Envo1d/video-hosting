@@ -1,19 +1,27 @@
-<script setup>
-const props = defineProps(['post'])
+<script setup lang='ts'>
+import type { PropType } from 'nuxt/dist/app/compat/capi'
+import type { IPost } from '~/types/post.interface'
+
+const props = defineProps({
+  post: {
+    type: Object as PropType<IPost>,
+    required: true,
+  },
+})
 const { $generalStore, $userStore } = useNuxtApp()
 const { post } = toRefs(props)
 
 const router = useRouter()
 
-const video = ref(null)
+const video = ref<HTMLVideoElement>()
 
-function displayPost(id) {
+function displayPost(id: string) {
   $generalStore.setBackUrl('/')
   $generalStore.selectedPost = null
   setTimeout(() => router.push(`/post/${id}`), 200)
 }
 
-async function copyLink(id) {
+async function copyLink(id: string) {
   const appUrl = useAppUrl()
   try {
     await useClipboard().toClipboard(`${appUrl}/post/${id}`)
@@ -27,36 +35,36 @@ async function copyLink(id) {
 }
 
 const postState = computed(() => {
-  let like = post.value.likes.find(like => like.userId === $userStore.id)
+  const like = post.value.likes.find(like => like.userId === $userStore.id)
+  let likeExists = false
   if (like)
-    like = true
-  else like = false
+    likeExists = true
 
-  const follow = $userStore.subscriptions.includes(post.value.user.id)
+  const follow = $userStore.subscriptions?.includes(post.value.user.id)
 
-  return { like, follow }
+  return { like: likeExists, follow }
 })
 
-async function likePost(post) {
+async function likePost(post: IPost) {
   if (!$userStore.id) {
     $generalStore.isLoginOpen = true
     return
   }
   try {
-    await $userStore.likePost(post)
+    await $userStore.likePost(post, false)
   }
   catch (error) {
     console.error(error)
   }
 }
 
-async function unlikePost(post) {
+async function unlikePost(post: IPost) {
   if (!$userStore.id) {
     $generalStore.isLoginOpen = true
     return
   }
   try {
-    await $userStore.unlikePost(post)
+    await $userStore.unlikePost(post, false)
   }
   catch (error) {
     console.error(error)
@@ -66,17 +74,15 @@ async function unlikePost(post) {
 onMounted(() => {
   const observer = new IntersectionObserver((entries) => {
     if (entries[0].isIntersecting)
-      video.value.play()
-    else video.value.pause()
+      video.value?.play()
+    else video.value?.pause()
   }, { threshold: [0.6] })
 
-  observer.observe(document.getElementById(`PostMain-${post.value.id}`))
+  observer.observe(document.getElementById(`PostMain-${post.value.id}`) as HTMLElement)
 })
 
 onBeforeUnmount(() => {
-  video.value.pause()
-  video.value.currentTime = 0
-  video.value.src = ''
+  video.value?.pause()
 })
 </script>
 

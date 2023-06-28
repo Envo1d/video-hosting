@@ -52,8 +52,6 @@ export const useGeneralStore = defineStore('general', {
       }, async (error: any) => {
         switch (error.response.status) {
           case 401:
-            await useUserStore().getTokens()
-            break
           case 403:
           case 419:
             useUserStore().resetUser()

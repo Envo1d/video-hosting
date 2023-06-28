@@ -66,8 +66,8 @@ export const useProfileStore = defineStore('profile', {
       this.$state.bio = ''
       this.$state.image = ''
       this.$state.posts = null
-      this.$state.subscribers = 0
-      this.$state.subscriptions = 0
+      this.$state.following = 0
+      this.$state.followers = 0
     },
   },
   persist: true,

@@ -28,7 +28,9 @@ export const getRandomPosts = async (
 	next: NextFunction
 ) => {
 	try {
-		const posts = await getRandom()
+		const exclude  = req.query.exclude as string
+		console.log(exclude)
+		const posts = await getRandom(exclude)
 		
 		res.status(200).json({
 			posts

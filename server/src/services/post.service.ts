@@ -34,8 +34,8 @@ export const getAll = async () => {
   })
 }
 
-export const getRandom = async () => {
-  return await AppDataSource.query('SELECT posts.id, title, "videoUrl", "iconUrl", "userId", users.name, users.image FROM posts LEFT JOIN users ON "userId" = users.id ORDER BY RANDOM() LIMIT 10')
+export const getRandom = async (postId: string) => {
+  return await AppDataSource.query(`SELECT posts.id, title, "videoUrl", "iconUrl", "userId", users.name, users.image FROM posts LEFT JOIN users ON "userId" = users.id WHERE posts.id != '${postId}' ORDER BY RANDOM() LIMIT 10`)
 }
 
 export const getPostIdsByUserId = async(userId: string)=> {

@@ -136,7 +136,7 @@ onMounted(async () => {
       title: `${selectedPost.value?.title}`,
       ogTitle: `${selectedPost.value?.title}`,
     })
-    await $generalStore.getRandomPosts()
+    await $generalStore.getRandomPosts(route.params.id as string)
   }
   catch (error: any) {
     if (error && error.response.status === 400)

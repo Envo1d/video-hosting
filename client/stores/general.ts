@@ -144,12 +144,15 @@ export const useGeneralStore = defineStore('general', {
       this.posts = res.data.posts
     },
 
-    async getRandomPosts() {
+    async getRandomPosts(postId: string) {
       const { $axios } = useNuxtApp()
 
       const res = await $axios({
         url: '/global/random',
         method: 'GET',
+        params: {
+          exclude: postId,
+        },
       })
 
       this.randomPosts = res.data.posts

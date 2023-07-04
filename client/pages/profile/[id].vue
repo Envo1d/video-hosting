@@ -7,11 +7,6 @@ const { posts, allLikes, name } = storeToRefs($profileStore)
 
 const route = useRoute()
 
-useSeoMeta({
-  title: `${name.value} Profile`,
-  ogTitle: `${name.value} Profile`,
-})
-
 const show = ref(false)
 
 const isFollow = computed(() => {
@@ -23,6 +18,19 @@ const isFollow = computed(() => {
     return false
   }
   return false
+})
+
+onMounted(async () => {
+  try {
+    await $profileStore.getProfile(route.params.id)
+    useSeoMeta({
+      title: `${name.value} Profile`,
+      ogTitle: `${name.value} Profile`,
+    })
+  }
+  catch (error) {
+    console.error(error)
+  }
 })
 
 async function actionUser(type) {
@@ -59,7 +67,7 @@ watch(() => posts.value, () => {
       v-if="$profileStore.name"
       class="pt-[90px] lg:pr-0 pr-2 w-full 2xl:mx-auto"
     >
-      <div class="bg-primary w-[calc(90vw-150px)] hidden lg:flex overflow-hidden rounded-xl max-h-[280px] mb-10">
+      <div class="bg-primary w-[calc(90vw-150px)] hidden lg:flex overflow-hidden rounded-xl h-[280px] max-h-[280px] mb-10">
         <button v-if="$profileStore.id === $userStore.id" class="absolute mt-5 ml-10 h-min" @click="() => $generalStore.isEditProfileBackOpen = true">
           <Icon name="mdi:pencil" class="text-white text-opacity-30 hover:text-opacity-100" size="18" />
         </button>

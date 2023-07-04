@@ -202,8 +202,12 @@ function onFullscreenClick() {
 }
 
 function loadedData() {
-  if (video.value?.readyState === 4)
+  if (video.value?.readyState === 4) {
     videoDuration.value = $generalStore.convertTime(video.value?.duration)
+    setTimeout(() => {
+      onPlayPauseClick()
+    }, 500)
+  }
 }
 </script>
 

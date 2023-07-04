@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
+import { getRandom } from '../services/post.service'
 import { getFollowing, getSuggested } from '../services/subscription.service'
 
 export const getRandomUsers= async (
@@ -19,4 +20,20 @@ export const getRandomUsers= async (
 	{
 		next(error)
 	}
+}
+
+export const getRandomPosts = async (
+	req: Request,
+	res: Response,
+	next: NextFunction
+) => {
+	try {
+		const posts = await getRandom()
+		
+		res.status(200).json({
+			posts
+		})
+} catch (error) {
+	next(error)
+}
 }

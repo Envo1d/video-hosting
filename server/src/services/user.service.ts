@@ -26,6 +26,12 @@ export const updateUserImage = async (userId: string, imageUrl: string) => {
   }, {image: imageUrl})
 }
 
+export const updateUserBackImage = async (userId: string, imageUrl: string) => {
+  return await userRepo.update({
+    id: userId
+  }, {profileBackgroundImage: imageUrl})
+}
+
 export const findUserByEmail = async ({ email }: { email: string }) => {
   return await userRepo.findOneBy({ email });
 };
@@ -36,6 +42,10 @@ export const findUserById = async (userId: string) => {
 
 export const getUserImageById = async (userId: string) => {
   return await userRepo.findOneBy({id:userId}).then(user => user?.image || undefined)
+}
+
+export const getUserBackImageById = async (userId: string) => {
+  return await userRepo.findOneBy({id:userId}).then(user => user?.profileBackgroundImage || undefined)
 }
 
 export const getFullUser = async (userId:string) =>{
@@ -49,6 +59,7 @@ export const getFullUser = async (userId:string) =>{
       name: true,
       bio: true,
       image: true,
+      profileBackgroundImage: true,
       posts: {
         likes: {
           id: true

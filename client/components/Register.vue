@@ -5,6 +5,7 @@ const { $userStore, $generalStore } = useNuxtApp()
 
 const email = ref('')
 const name = ref('')
+const nickname = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 const responseError = useState<IAuthErrors>('errors')
@@ -16,6 +17,7 @@ async function register() {
       email: email.value,
       password: password.value,
       name: name.value,
+      nickname: `@${nickname.value}`,
       passwordConfirm: confirmPassword.value,
     })
     await $userStore.getUser()
@@ -26,21 +28,35 @@ async function register() {
     responseError.value = error.response.data
   }
 }
+
+watch(() => name.value, () => {
+  nickname.value = name.value
+})
 </script>
 
 <template>
   <section>
-    <div class="text-center text-[28px] mb-4 font-bold">
+    <div class="text-center text-[28px] mb-4 font-bold text-white/80">
       Sign up
     </div>
 
     <div class="px-6 pb-2">
       <TextInput
         v-model:input="name"
-        placeholder="Full name"
+        placeholder="Name"
         input-type="text"
         :auto-focus="true"
         :error="responseError && responseError?.errors?.find(item => item.path[1] === 'name')?.message"
+      />
+    </div>
+
+    <div class="px-6 pb-2">
+      <TextInput
+        v-model:input="nickname"
+        placeholder="Nickname"
+        input-type="text"
+        :auto-focus="true"
+        :error="responseError && responseError?.errors?.find(item => item.path[1] === 'nickname')?.message"
       />
     </div>
 
@@ -74,7 +90,7 @@ async function register() {
     <div class="px-6 pb-2 mt-6">
       <button
         :disabled="!email || !password || !name || !confirmPassword"
-        :class="(!email || !password || !name || !confirmPassword) ? 'bg-gray-200' : 'bg-[#f02c56]'"
+        :class="(!email || !password || !name || !confirmPassword) ? 'bg-primary' : 'bg-secondary'"
         class="w-full font-semibold text-white py-3 rounded-sm text-[17px]"
         @click="() => register()"
       >

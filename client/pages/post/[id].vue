@@ -1,19 +1,19 @@
-<script setup>
+<script setup lang='ts'>
 import { storeToRefs } from 'pinia'
 
 const { $generalStore, $userStore, $profileStore } = useNuxtApp()
 const { selectedPost } = storeToRefs($generalStore)
 
-const isLoaded = ref(true)
-const video = ref(null)
-const inputFocused = ref(false)
-const comment = ref(null)
+const comment = ref('')
+const notification = ref('')
+const isShowFullDesc = ref(false)
+const input = ref<HTMLTextAreaElement>()
 
 const route = useRoute()
 const router = useRouter()
 
 const isLiked = computed(() => {
-  const res = $generalStore.selectedPost.likes.find(like => like.userId === $userStore.id)
+  const res = $generalStore.selectedPost?.likes.find(like => like.userId === $userStore.id)
   if (res)
     return true
   return false
@@ -45,43 +45,33 @@ async function unlikePost() {
   }
 }
 
-function loopThroughPostsUp() {
-  setTimeout(() => {
-    let isBreak = false
-    const currentId = route.params.id
+const isFollow = computed(() => {
+  if ($userStore.id) {
+    const res = $userStore.subscriptions?.includes(route.params.id as string)
 
-    for (let i = 0; i < $generalStore.ids.length; i++) {
-      const id = $generalStore.ids[i]
+    if (res)
+      return true
+    return false
+  }
+  return false
+})
 
-      if (id === currentId && i !== $generalStore.ids.length - 1) {
-        isBreak = true
-        router.push(`/post/${$generalStore.ids[i + 1]}`)
-        return
-      }
-    }
-    if (!isBreak)
-      router.push(`/post/${$generalStore.ids[0]}`)
-  }, 300)
-}
-
-function loopThroughPostsDown() {
-  setTimeout(() => {
-    const idArrayReversed = $generalStore.ids.reverse()
-    let isBreak = false
-    const currentId = route.params.id
-
-    for (let i = 0; i < idArrayReversed.length; i++) {
-      const id = idArrayReversed[i]
-
-      if (id === currentId && i !== idArrayReversed.length - 1) {
-        isBreak = true
-        router.push(`/post/${idArrayReversed[i + 1]}`)
-        return
-      }
-    }
-    if (!isBreak)
-      router.push(`/post/${idArrayReversed[0]}`)
-  }, 300)
+async function actionUser(type: 'follow' | 'unfollow') {
+  if (!$userStore.id) {
+    $generalStore.isLoginOpen = true
+    return
+  }
+  try {
+    if (type === 'follow')
+      await $userStore.follow(route.params.id as string)
+    else await $userStore.unfollow(route.params.id as string)
+    await $userStore.getUser()
+    await $generalStore.getRandomUsers()
+    await $profileStore.getProfile(route.params.id as string)
+  }
+  catch (error) {
+    console.error(error)
+  }
 }
 
 async function deletePost() {
@@ -89,7 +79,8 @@ async function deletePost() {
 
   try {
     if (res) {
-      await $userStore.deletePost($generalStore.selectedPost)
+      if ($generalStore.selectedPost)
+        await $userStore.deletePost($generalStore.selectedPost)
       await $profileStore.getProfile($userStore.id)
       router.push(`/profile/${$userStore.id}`)
     }
@@ -99,23 +90,24 @@ async function deletePost() {
   }
 }
 
-async function copyLink(id) {
+async function copyLink(id: string | undefined) {
+  if (id === undefined)
+    return
   const appUrl = useAppUrl()
   try {
     await useClipboard().toClipboard(`${appUrl}/post/${id}`)
-    await $generalStore.updateReposts(id)
-    $generalStore.notificationType = 'copy'
-    setTimeout(() => $generalStore.notificationType = null, 800)
+    notification.value = 'copy'
+    setTimeout(() => notification.value = '', 800)
   }
   catch (e) {
     console.error(e)
   }
 }
 
-async function deleteComment(commentId) {
+async function deleteComment(commentId: string) {
   const res = confirm('Are you sure you want to delete this comment?')
   try {
-    if (res)
+    if (res && $generalStore.selectedPost)
       await $userStore.deleteComment($generalStore.selectedPost, commentId)
   }
   catch (error) {
@@ -125,9 +117,10 @@ async function deleteComment(commentId) {
 
 async function addComment() {
   try {
-    await $userStore.addComment($generalStore.selectedPost, comment.value)
-    comment.value = null
-    document.getElementById('Comments').scroll({ top: 0, behavior: 'smooth' })
+    if ($generalStore.selectedPost)
+      await $userStore.addComment($generalStore.selectedPost, comment.value)
+    comment.value = ''
+    document.getElementById('Comments')?.scroll({ top: 0, behavior: 'smooth' })
   }
   catch (error) {
     console.error(error)
@@ -138,201 +131,160 @@ onMounted(async () => {
   $generalStore.selectedPost = null
 
   try {
-    await $generalStore.getPostById(route.params.id)
+    await $generalStore.getPostById(route.params.id as string)
     useSeoMeta({
-      title: `${selectedPost.value.text}`,
-      ogTitle: `${selectedPost.value.text}`,
+      title: `${selectedPost.value?.title}`,
+      ogTitle: `${selectedPost.value?.title}`,
     })
+    await $generalStore.getRandomPosts()
   }
-  catch (error) {
+  catch (error: any) {
     if (error && error.response.status === 400)
       router.push('/')
   }
-
-  video.value.addEventListener('loadeddata', (e) => {
-    if (e.target) {
-      setTimeout(() => {
-        isLoaded.value = true
-      }, 500)
-    }
-  })
 })
 
-onBeforeUnmount(() => {
-  video.value.pause()
-  video.value.currentTime = 0
-  video.value.src = ''
+watch(() => comment.value, (com) => {
+  if (com.length >= 1000) {
+    notification.value = 'com'
+    return
+  }
+  notification.value = ''
 })
 
-watch(() => isLoaded.value, () => {
-  if (isLoaded.value)
-    setTimeout(() => video.value.play(), 500)
+watch(() => comment.value, (com) => {
+  if (input.value) {
+    if (com.length >= 800)
+      input.value.rows = 5
+    else if (com.length >= 600)
+      input.value.rows = 4
+    else if (com.length >= 400)
+      input.value.rows = 3
+    else if (com.length >= 200)
+      input.value.rows = 2
+    else input.value.rows = 1
+  }
 })
-
-watch(() => $generalStore.selectedPost, () => {})
 </script>
 
 <template>
-  <div id="PostPage" class="fixed lg:flex justify-between z-50 top-0 left-0 w-full h-full bg-black lg:overflow-hidden overflow-auto">
-    <div v-if="$generalStore.selectedPost" class="lg:w-[calc(100%-540px)] h-full relative">
-      <NuxtLink class="absolute z-20 m-5 rounded-full bg-gray-700 p-1.5 hover:bg-gray-800" :to="$generalStore.isBackUrl">
-        <Icon name="material-symbols:close" color="#ffffff" size="27" />
-      </NuxtLink>
-
-      <div v-if="($generalStore.ids.length > 1)">
-        <button
-          :disabled="!isLoaded"
-          class="absolute z-20 right-4 top-4 flex items-center justify-center rounded-full bg-gray-700 p-1.5 hover:bg-gray-800"
-          @click="() => loopThroughPostsUp()"
-        >
-          <Icon name="mdi:chevron-up" size="30" color="#ffffff" />
-        </button>
-
-        <button
-          :disabled="!isLoaded"
-          class="absolute z-20 right-4 top-20 flex items-center justify-center rounded-full bg-gray-700 p-1.5 hover:bg-gray-800"
-          @click="() => loopThroughPostsDown()"
-        >
-          <Icon name="mdi:chevron-down" size="30" color="#ffffff" />
-        </button>
-      </div>
-
-      <img src="~/assets/images/tiktok-logo-small.png" width="45" class="absolute top-[18px] left-[70px] rounded-full lg:mx-0 mx-auto">
-
-      <video v-if="$generalStore.selectedPost.videoUrl" class="absolute object-cover w-full my-auto z-[-1] h-screen" :src="$generalStore.selectedPost.videoUrl" />
-
-      <div
-        v-if="!isLoaded"
-        class="flex items-center justify-center bg-black bg-opacity-70 h-screen lg:min-w-[480px]"
-      >
-        <Icon class="animate-spin ml-1" name="mingcute:loading-line" size="100" color="#ffffff" />
-      </div>
-
-      <div class="bg-black bg-opacity-70 lg:min-w-[480px]">
-        <video v-if="$generalStore.selectedPost.videoUrl" ref="video" autoplay loop class="h-screen mx-auto" :src="$generalStore.selectedPost.videoUrl" />
-      </div>
-    </div>
-
-    <div
-      v-if="$generalStore.selectedPost"
-      id="InfoSection"
-      class="lg:max-w-[550px] relative w-full h-full bg-white"
-    >
-      <div class="py-7" />
-
-      <div class="flex items-center justify-between px-8">
-        <div class="flex items-center">
-          <NuxtLink :to="`/profile/${$generalStore.selectedPost.user.id}`">
-            <img class="rounded-full lg:mx-0 mx-auto" width="40" :src="$generalStore.selectedPost.user.image">
-          </NuxtLink>
-          <div class="ml-3 pt-0.5">
-            <div class="font-semibold text-[17px]">
-              {{ $generalStore.allLowerCaseNoCaps($generalStore.selectedPost.user.name) }}
+  <NuxtLayout>
+    <div class="flex flex-row text-white px-[80px] pb-10">
+      <div class="flex flex-col w-[1360px]">
+        <VideoPlayer :video-url="selectedPost?.videoUrl" />
+        <div class="mt-2">
+          <div class="text-4xl font-semibold tracking-wider">
+            {{ selectedPost?.title }}
+          </div>
+          <div class="mt-1.5 flex flex-row justify-between">
+            <div class="text-gray text-lg">
+              views
             </div>
-            <div class="-mt-5 font-light text-[13px]">
-              {{ $generalStore.selectedPost.user.name }}
-              <span class="relative -top-[2px] text-[30px] pr-0.5">.</span>
-              <span class="font-medium">{{ new Date($generalStore.selectedPost.created_at).toLocaleDateString() }}</span>
+            <div class="flex flex-row">
+              <button class="px-3 py-1 bg-gray bg-opacity-60 rounded-full hover:bg-secondary hover:bg-opacity-100" :class="isLiked ? 'border border-solid border-secondary' : ''" @click="() => isLiked ? unlikePost() : likePost()">
+                <Icon :name="isLiked ? 'carbon:thumbs-up-filled' : 'carbon:thumbs-up'" class="-mt-1" size="18" />
+                <span class="ml-1.5">{{ $generalStore.formatLikes(selectedPost?.likes.length) }}</span>
+              </button>
+              <button class="ml-3 px-3 py-1 bg-gray bg-opacity-60 rounded-full hover:bg-secondary hover:bg-opacity-100" @click="copyLink(selectedPost?.id)">
+                <Icon name="ph:share-fat-fill" class="-mt-1" size="18" />
+                <span class="ml-1.5">Share</span>
+              </button>
             </div>
           </div>
-        </div>
-
-        <Icon v-if="$userStore.id === $generalStore.selectedPost.user.id" class="cursor-pointer" size="25" name="material-symbols:delete-outline-sharp" @click="() => deletePost()" />
-      </div>
-
-      <div class="px-8 mt-4 text-sm">
-        {{ $generalStore.selectedPost.text }}
-      </div>
-
-      <div class="px-8 mt-4 text-sm font-bold">
-        <Icon size="17" name="mdi:music" />
-        original sound - {{ $generalStore.allLowerCaseNoCaps($generalStore.selectedPost.user.name) }}
-      </div>
-
-      <Notification :notification-type="$generalStore.notificationType" />
-
-      <div class="flex items-center px-8 mt-8">
-        <div class="pb-4 text-center flex items-center">
-          <button
-            class="rounded-full bg-gray-200 p-2 cursor-pointer"
-            @click="() => isLiked ? unlikePost() : likePost()"
-          >
-            <Icon size="25" name="mdi:heart" :color="isLiked ? '#f02c56' : ''" />
-          </button>
-          <span class="text-xs pl-2 pr-4 text-gray-800 font-semibold">
-            {{ $generalStore.selectedPost.likes.length }}
-          </span>
-        </div>
-
-        <div class="pb-4 text-center flex items-center">
-          <div class="rounded-full bg-gray-200 p-2 cursor-pointer">
-            <Icon size="25" name="bx:bxs-message-rounded-dots" />
-          </div>
-          <span class="text-xs pl-2 pr-4 text-gray-800 font-semibold">
-            {{ $generalStore.selectedPost.comments.length }}
-          </span>
-        </div>
-
-        <div class="pb-4 text-center flex items-center">
-          <button
-            class="rounded-full bg-gray-200 p-2 cursor-pointer"
-            @click="copyLink($generalStore.selectedPost.id)"
-          >
-            <Icon name="ri:share-forward-fill" size="25" />
-          </button>
-          <span class="text-xs pl-2 pr-4 text-gray-800 font-semibold">{{ $generalStore.selectedPost.reposts }}</span>
-        </div>
-      </div>
-
-      <div
-        id="Comments"
-        class="bg-[#f8f8f8] z-0 w-full h-[calc(100%-273px)] border-t-2 overflow-auto"
-      >
-        <div class="pt-2" />
-
-        <div v-if="($generalStore.selectedPost.comments.length < 1)" class="text-center mt-6 text-xl text-gray-500">
-          No comments...
-        </div>
-
-        <div
-          v-for="com in $generalStore.selectedPost.comments"
-          v-else
-          :key="com.id"
-          class="flex items-center justify-between px-8 mt-4"
-        >
-          <div class="flex items-center relative w-full">
-            <NuxtLink :to="`/profile/${com.user.id}`">
-              <img :src="com.user.image" width="40" class="absolute top-0 rounded-full lg:mx-0 mx-auto">
-            </NuxtLink>
-            <div class="ml-14 pt-0.5 w-full">
-              <div class="font-semibold flex items-center justify-between text-[18px]">
-                {{ com.user.name }}
-                <Icon v-if="$userStore.id === com.user.id" class="cursor-pointer" size="25" name="material-symbols:delete-outline-sharp" @click="() => deleteComment(com.id)" />
+          <div class="border-b border-gray/40 mt-4 mb-8" />
+          <div class="flex flex-col">
+            <div class="flex flex-row justify-between">
+              <div class="flex flex-row">
+                <NuxtLink :to="`/profile/${selectedPost?.user.id}`">
+                  <img :src="selectedPost?.user.image" class="w-24 rounded-full mr-4">
+                </NuxtLink>
+                <div class="flex flex-col mt-1.5">
+                  <NuxtLink :to="`/profile/${selectedPost?.user.id}`">
+                    <span class="text-2xl font-semibold">{{ selectedPost?.user.name }}</span>
+                  </NuxtLink>
+                  <span class="mt-[2px] text-xs text-gray">Published on {{ $generalStore.formatDate(selectedPost?.created_at) }}</span>
+                </div>
               </div>
-              <div class="font-light text-[15px]">
-                {{ com.text }}
+              <div v-if="selectedPost?.user.id !== $userStore.id">
+                <button
+                  v-if="!isFollow"
+                  class="flex items-center max-h-[40px] rounded-full py-1.5 px-8 mt-3 text-[15px] text-white font-semibold bg-secondary hover:bg-secondary/80" @click="actionUser('follow')"
+                >
+                  Subscribe
+                </button>
+                <button
+                  v-else
+                  class="flex text-white border-white item-center max-h-[40px] rounded-full py-1.5 px-3.5 mt-3 text-[15px] font-semibold border hover:bg-gray" @click="actionUser('unfollow')"
+                >
+                  Unsubscribe
+                </button>
+              </div>
+            </div>
+            <div class="text-white/60 ml-28 h-max w-[calc(1360px-7rem)]" :class="isShowFullDesc ? 'break-words' : 'overflow-hidden text-ellipsis whitespace-nowrap'">
+              {{ selectedPost?.description }}
+            </div>
+            <div class="items-start ml-28 mt-1">
+              <button v-if="!isShowFullDesc" class="text-gray" @click="isShowFullDesc = true">
+                Show more
+              </button>
+              <button v-else class="text-gray" @click="isShowFullDesc = false">
+                Show less
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="border-b border-gray/40 my-8" />
+        <div class="mt-2">
+          <span class="text-xl font-semibold text-white/90 mb-5">Comments {{ selectedPost?.comments.length ? selectedPost.comments.length : '' }}</span>
+          <Notification :notification-type="notification" />
+          <div
+            v-if="$userStore.id"
+            id="CreateComment"
+            class="flex items-center justify-between h-max w-full mt-5 mb-5"
+          >
+            <div class="flex items-center rounded-lg w-full border-white/40 border">
+              <textarea ref="input" v-model="comment" maxlength="1000" cols="30" rows="1" class="resize-none overflow-hidden bg-transparent placeholder-white/40 text-[14px] focus:outline-none w-full p-2 rounded-lg" type="text" placeholder="Add comment..." />
+            </div>
+            <button class="font-semibold text-sm ml-5 py-1 px-3 rounded-full" :disabled="!comment" :class="comment ? 'bg-secondary cursor-pointer bg-opacity-100 hover:bg-secondary/80' : 'bg-white bg-opacity-10'" @click="() => addComment()">
+              Post
+            </button>
+          </div>
+          <div v-if="(selectedPost?.comments.length < 1)" class="text-center mt-6 text-xl text-white/90">
+            No comments...
+          </div>
+          <div
+            v-for="com in selectedPost?.comments"
+            v-else
+            :key="com.id"
+            class="flex items-center justify-between mt-4"
+          >
+            <div class="flex items-center relative w-full">
+              <NuxtLink :to="`/profile/${com.user.id}`">
+                <img :src="com.user.image" width="40" class="absolute top-0 rounded-full lg:mx-0 mx-auto">
+              </NuxtLink>
+              <div class="ml-14 pt-0.5 w-full">
+                <div class="font-semibold flex items-center justify-between text-[18px]">
+                  <NuxtLink :to="`/profile/${com.user.id}`">
+                    {{ com.user.name }}
+                  </NuxtLink>
+                  <Icon v-if="$userStore.id === com.user.id" class="cursor-pointer text-gray hover:text-secondary" size="25" name="ic:round-delete-outline" @click="() => deleteComment(com.id)" />
+                </div>
+                <div class="font-light text-[15px]">
+                  {{ com.text }}
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="mb-28" />
       </div>
-
-      <div
-        v-if="$userStore.id"
-        id="CreateComment"
-        class="absolute flex items-center justify-between bottom-0 bg-white h-[85px] lg:max-w-[550px] w-full py-5 px-8 border-t-2"
-      >
-        <div
-          :class="inputFocused ? 'border-2 border-gray-400' : 'border-2 border-[#f1f1f2]'"
-          class="flex items-center rounded-lg w-full lg:max-w-[420px]"
-        >
-          <input v-model="comment" class="bg-[#f1f1f2] text-[14px] focus:outline-none w-full lg:max-w-[420px] p-2 rounded-lg" type="text" placeholder="Add comment..." @focus="() => inputFocused = true" @blur="() => inputFocused = false">
+      <div class="flex flex-col w-[365px] pl-[40px]">
+        <span class="text-semibold text-xl mb-10">
+          Suggested
+        </span>
+        <div v-for="post in $generalStore.randomPosts" :key="post.id">
+          <PostRandom v-if="post" :post="post" />
         </div>
-        <button class="font-semibold text-sm ml-5 pr-1" :disabled="!comment" :class="comment ? 'text-[#f02c56] cursor-pointer' : 'text-gray-400'" @click="() => addComment()">
-          Post
-        </button>
       </div>
     </div>
-  </div>
+  </NuxtLayout>
 </template>

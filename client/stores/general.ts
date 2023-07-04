@@ -1,31 +1,33 @@
 import { defineStore } from 'pinia'
-import type { IPost } from '~/types/post.interface'
+import type { ILitePost, IPost } from '~/types/post.interface'
 import { useUserStore } from './user'
 
 interface RootState {
   isLoginOpen: boolean
   isEditProfileOpen: boolean
+  isEditProfileBackOpen: boolean
   selectedPost: IPost | null
   ids: string[] | null
   isBackUrl: string
   posts: IPost[] | null
+  randomPosts: ILitePost[] | null
   followingPosts: IPost[] | null
   suggested: null
   following: null
-  notificationType: null | string
 }
 
 export const useGeneralStore = defineStore('general', {
   state: () => ({
     isLoginOpen: false,
     isEditProfileOpen: false,
+    isEditProfileBackOpen: false,
     selectedPost: null,
     ids: null,
     isBackUrl: '/',
     posts: null,
+    randomPosts: null,
     suggested: null,
     following: null,
-    notificationType: null,
   } as RootState),
   actions: {
     bodySwitch(val: any) {
@@ -92,6 +94,45 @@ export const useGeneralStore = defineStore('general', {
       this.ids = res.data.ids
     },
 
+    convertTime(time: number | undefined) {
+      if (time === undefined)
+        return ''
+      let seconds: number | string = Math.floor(time % 60)
+      let minutes: number | string = Math.floor(time / 60) % 60
+      let hours: number | string = Math.floor(time / 3600)
+
+      seconds = seconds < 10 ? `0${seconds}` : seconds
+      minutes = minutes < 10 ? `0${minutes}` : minutes
+      hours = hours < 10 ? `0${hours}` : hours
+
+      if (hours == 0)
+        return `${minutes}:${seconds}`
+
+      return `${hours}:${minutes}:${seconds}`
+    },
+
+    formatLikes(likes: number | undefined) {
+      if (likes === undefined)
+        return
+      if (likes < 1000)
+        return likes
+      else if (likes >= 1000000)
+        return `${(likes / 1000000).toFixed(1)}m`
+      else if (likes >= 1000)
+        return `${(likes / 1000).toFixed(1)}k`
+    },
+
+    formatDate(dateString: string | undefined) {
+      if (dateString === undefined)
+        return
+
+      const date = new Date(dateString)
+      const day = date.toLocaleString('en-EN', { day: '2-digit' })
+      const month = date.toLocaleString('en-EN', { month: 'short' })
+      const year = date.toLocaleString('en-EN', { year: 'numeric' })
+      return `${day} ${month} ${year}`
+    },
+
     async getAllUsersAndPosts() {
       const { $axios } = useNuxtApp()
 
@@ -103,6 +144,17 @@ export const useGeneralStore = defineStore('general', {
       this.posts = res.data.posts
     },
 
+    async getRandomPosts() {
+      const { $axios } = useNuxtApp()
+
+      const res = await $axios({
+        url: '/global/random',
+        method: 'GET',
+      })
+
+      this.randomPosts = res.data.posts
+    },
+
     async getAllFollowingUsersAndPosts() {
       const { $axios } = useNuxtApp()
 
@@ -112,18 +164,6 @@ export const useGeneralStore = defineStore('general', {
       })
 
       this.followingPosts = res.data.posts
-    },
-
-    async updateReposts(postId: string) {
-      const { $axios } = useNuxtApp()
-
-      await $axios({
-        url: '/posts',
-        method: 'PUT',
-        params: {
-          id: postId,
-        },
-      })
     },
 
     updateSideMenuImage(array: any, user: any) {

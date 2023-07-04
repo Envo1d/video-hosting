@@ -16,10 +16,4 @@ export class Like extends Model {
 
 		@Column()
 		postId: string
-
-		// @ManyToOne(() => Comment, (comment) => comment.likes, {onDelete: 'CASCADE'})
-		// comment: Comment
-
-		// @Column()
-		// commentId: string
 }

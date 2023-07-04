@@ -50,8 +50,10 @@ export const getFollowingPosts= async (userId: string) => {
     },
     select: {
       id: true,
-      text: true,
+      title: true,
       videoUrl: true,
+      iconUrl: true,
+      description: true,
       user: {
         id: true,
         name: true,
@@ -61,7 +63,6 @@ export const getFollowingPosts= async (userId: string) => {
         id: true,
         userId: true
       },
-      reposts: true
     }
   })
 }

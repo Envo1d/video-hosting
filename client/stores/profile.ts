@@ -6,6 +6,7 @@ interface RootState {
   name: string
   bio: string
   image: string
+  backgroundImage: string
   post: IPost | null
   posts: IPost[] | null
   allLikes: number
@@ -19,6 +20,7 @@ export const useProfileStore = defineStore('profile', {
     name: '',
     bio: '',
     image: '',
+    backgroundImage: '',
     post: null,
     posts: null,
     allLikes: 0,
@@ -43,6 +45,7 @@ export const useProfileStore = defineStore('profile', {
       this.$state.name = res.data.user.name
       this.$state.bio = res.data.user.bio
       this.$state.image = res.data.user.image
+      this.$state.backgroundImage = res.data.user.backgroundImage
       this.$state.posts = res.data.posts
       this.following = res.data.user.subscriptions
       this.followers = res.data.user.subscribers
@@ -65,6 +68,7 @@ export const useProfileStore = defineStore('profile', {
       this.$state.name = ''
       this.$state.bio = ''
       this.$state.image = ''
+      this.$state.backgroundImage = ''
       this.$state.posts = null
       this.$state.following = 0
       this.$state.followers = 0

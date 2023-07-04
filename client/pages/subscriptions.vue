@@ -20,7 +20,7 @@ onMounted(async () => {
 
 <template>
   <NuxtLayout>
-    <div class="pt-[80px] w-[calc(100%-90px)] max-w-[690px]">
+    <div class="pt-[80px] w-full grid grid-cols-4">
       <div v-for="post in $generalStore.followingPosts" :key="post.id">
         <PostMain v-if="post" :post="post" />
       </div>

@@ -6,14 +6,19 @@ const route = useRoute()
   <section>
     <TopNav />
     <div
-      :class="route.fullPath === '/' || route.fullPath === '/following' ? 'max-w-[1140px]' : ''"
-      class="flex justify-between mx-auto w-full lg:px-2.5 px-0"
+      class="flex mx-auto w-full lg:px-2.5 px-0"
     >
-      <div>
+      <div v-if="!route.path.includes('/post')" class="flex flex-row">
         <SideNavMain />
+        <div class="ml-[calc(134px+120px)]">
+          <slot />
+        </div>
       </div>
-
-      <slot />
+      <div v-else>
+        <div class="mt-[82px]">
+          <slot />
+        </div>
+      </div>
     </div>
   </section>
 </template>

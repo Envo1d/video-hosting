@@ -1,10 +1,10 @@
 <script setup lang='ts'>
 import type { PropType } from 'nuxt/dist/app/compat/capi'
-import type { IPost } from '~/types/post.interface'
+import type { ILitePost } from '~/types/post.interface'
 
 const props = defineProps({
   post: {
-    type: Object as PropType<IPost>,
+    type: Object as PropType<ILitePost>,
     required: true,
   },
 })
@@ -49,7 +49,7 @@ function loadedData() {
 
 <template>
   <div
-    v-if="post.user" class="flex py-6"
+    v-if="post.name" class="flex py-1.5"
     @mouseenter="() => mouseEnter()" @mouseleave="() => mouseLeave()"
   >
     <div class="pl-3 w-full px-4">
@@ -73,16 +73,16 @@ function loadedData() {
         </div>
       </div>
       <div class="flex flex-row mt-2">
-        <div class="cursor-pointer mt-2" @click="router.push(`/profile/${post.user.id}`)">
-          <img :src="post.user.image" class="rounded-full max-h-[35px]" width="35">
+        <div class="cursor-pointer mt-2" @click="router.push(`/profile/${post.userId}`)">
+          <img :src="post.image" class="rounded-full max-h-[35px]" width="35">
         </div>
         <div class="flex flex-col items-start">
           <div class="text-[16px] overflow-hidden text-ellipsis whitespace-nowrap cursor-default pb-0.5 break-words max-w-[290px] text-white ml-3">
             {{ post.title }}
           </div>
-          <button class="ml-3" @click="router.push(`/profile/${post.user.id}`)">
+          <button class="ml-3" @click="router.push(`/profile/${post.userId}`)">
             <span class="text-[14px] text-white cursor-pointer">
-              {{ post.user.name }}
+              {{ post.name }}
             </span>
           </button>
         </div>

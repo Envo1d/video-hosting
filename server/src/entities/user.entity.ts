@@ -1,5 +1,6 @@
 import { hash, verify } from 'argon2'
 import { BeforeInsert, Column, Entity, Index, OneToMany } from "typeorm"
+import { CommentLike } from './comment-like.entity'
 import { Comment } from './comment.entity'
 import { Like } from './like.entity'
 import Model from './model.entity'
@@ -10,6 +11,13 @@ import { Subscription } from './subscription.entity'
 export class User extends Model {
     @Column()
     name: string
+
+    @Column({unique: true})
+    nickname: string
+
+    @Index('link_index')
+    @Column({unique: true})
+    link: string
 
     @Index('email_index')
     @Column({unique: true})
@@ -24,19 +32,25 @@ export class User extends Model {
     @Column({ default: '/default.jpg',})
     image: string;
 
+    @Column({default: ''})
+    profileBackgroundImage: string
+
     @OneToMany(() => Post, (post) => post.user)
     posts: Post[]
 
     @OneToMany(() => Comment, (comment) => comment.user)
     comments: Comment[]
 
+    @OneToMany(() => CommentLike, (like) => like.user)
+    commentLikes: CommentLike[]
+
     @OneToMany(() => Like, (like) => like.user)
     likes: Like[]
 
-    @OneToMany(type => Subscription, subscription => subscription.subscriber)
+    @OneToMany(() => Subscription, subscription => subscription.subscriber)
     subscriptions: Subscription[];
   
-    @OneToMany(type => Subscription, subscription => subscription.subscribedTo)
+    @OneToMany(() => Subscription, subscription => subscription.subscribedTo)
     subscribers: Subscription[];
 
     toJSON() {
@@ -46,6 +60,11 @@ export class User extends Model {
     @BeforeInsert()
     async hashPassword() {
       this.password = await hash(this.password)
+    }
+
+    @BeforeInsert()
+    createLink() {
+      this.link = `@${this.nickname}`
     }
 
     static async comparePasswords(

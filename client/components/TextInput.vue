@@ -21,7 +21,7 @@ const inputComputed = computed({
     <input
       :id="`input-${placeholder}`"
       v-model="inputComputed"
-      class="block w-full bg-[#f1f1f2] text-gray-800 border border-gray-300 rounded-md py-2.5 px-3 focus:outline-none"
+      class="block w-full bg-transparent text-white/80 border border-gray rounded-md py-2.5 px-3 focus:outline-none"
       :placeholder="placeholder"
       :type="inputType"
       autocomplete="off"

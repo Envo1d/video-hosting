@@ -35,10 +35,11 @@ export const register = async (
 	res: Response,
 	next: NextFunction) => {
 	try {
-		const { name, password, email } = req.body;
+		const { name, password, email, nickname } = req.body;
 
     const user = await createUser({
       name,
+			nickname,
       email: email.toLowerCase(),
       password,
     });

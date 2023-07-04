@@ -1,6 +1,8 @@
 export interface IPost {
   id: string
-  text: string
+  title: string
+  description: string
+  iconUrl: string
   videoUrl: string
   user: {
     id: string
@@ -10,7 +12,16 @@ export interface IPost {
   likes: ILike[]
   created_at: string
   comments: IComment[]
-  reposts: number
+}
+
+export interface ILitePost {
+  id: string
+  title: string
+  videoUrl: string
+  iconUrl: string
+  userId: string
+  name: string
+  image: string
 }
 
 export interface IComment {

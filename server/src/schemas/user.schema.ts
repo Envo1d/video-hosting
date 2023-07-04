@@ -5,6 +5,9 @@ export const createUserSchema = object({
     name: string({
       required_error: 'Name is required',
     }),
+    nickname: string({
+      required_error: 'Nickname is required'
+    }),
     email: string({
       required_error: 'Email address is required',
     }).email('Invalid email address'),

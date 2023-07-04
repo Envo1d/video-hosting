@@ -24,11 +24,11 @@ async function login() {
 
 <template>
   <section>
-    <div class="text-center text-[28px] mb-4 font-bold">
+    <div class="text-center text-[28px] mb-4 font-bold text-white/80">
       Log in
     </div>
 
-    <div class="px-6 pb-1.5 text-[15px]">
+    <div class="px-6 pb-1.5 text-[15px] text-white/80">
       Email address
     </div>
 
@@ -42,7 +42,7 @@ async function login() {
       />
     </div>
 
-    <div class="px-6 pb-1.5 text-[15px]">
+    <div class="px-6 pb-1.5 text-[15px] text-white/80">
       Password
     </div>
     <div class="px-6 pb-2">
@@ -53,14 +53,14 @@ async function login() {
         :error="responseError && responseError?.errors?.find(item => item.path[1] === 'password')?.message"
       />
     </div>
-    <div class="px-6 text-gray-600 text-[12px]">
+    <div class="px-6 text-gray-600 text-[12px] text-white/80">
       Forgot password?
     </div>
 
     <div class="px-6 pb-2 mt-6">
       <button
         :disabled="!email || !password"
-        :class="(!email || !password) ? 'bg-gray-200' : 'bg-[#f02c56]'"
+        :class="(!email || !password) ? 'bg-primary' : 'bg-secondary'"
         class="w-full font-semibold text-white py-3 rounded-sm text-[17px]"
         @click="() => login()"
       >

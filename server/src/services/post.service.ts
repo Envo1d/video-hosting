@@ -3,9 +3,9 @@ import { AppDataSource } from '../utils/data-source'
 
 const postRepo = AppDataSource.getRepository(Post)
 
-export const createPost = async (userId: string, videoUrl: string, text: string) => {
+export const createPost = async (userId: string, videoUrl: string, iconUrl: string,  title: string, description: string) => {
 	return (await AppDataSource.manager.save(
-    AppDataSource.manager.create(Post, {videoUrl: videoUrl, text: text, userId: userId})
+    AppDataSource.manager.create(Post, {videoUrl: videoUrl, title: title, userId: userId, iconUrl: iconUrl, description: description})
   )) as Post;
 }
 
@@ -17,8 +17,10 @@ export const getAll = async () => {
     },
     select: {
       id: true,
-      text: true,
+      title: true,
+      description: true,
       videoUrl: true,
+      iconUrl: true,
       user: {
         id: true,
         name: true,
@@ -28,9 +30,12 @@ export const getAll = async () => {
         id: true,
         userId: true
       },
-      reposts: true
     }
   })
+}
+
+export const getRandom = async () => {
+  return await AppDataSource.query('SELECT posts.id, title, "videoUrl", "iconUrl", "userId", users.name, users.image FROM posts LEFT JOIN users ON "userId" = users.id ORDER BY RANDOM() LIMIT 10')
 }
 
 export const getPostIdsByUserId = async(userId: string)=> {
@@ -48,7 +53,9 @@ export const getByUserId = async(userId: string) => {
     where: {user: {id: userId}},
     select: {
       id: true,
-      text: true,
+      title: true,
+      description: true,
+      iconUrl: true,
       videoUrl: true,
       user: {
         id: true,
@@ -57,7 +64,6 @@ export const getByUserId = async(userId: string) => {
         id: true,
         userId: true,
       },
-      reposts: true
     },
     order: {
       created_at: 'DESC'
@@ -90,7 +96,9 @@ export const getById = async (id: string) => {
     where: {id: id},
     select: {
       id: true,
-      text: true,
+      title: true,
+      description: true,
+      iconUrl: true,
       videoUrl: true,
       created_at: true,
       user: {
@@ -102,7 +110,6 @@ export const getById = async (id: string) => {
         id: true,
         userId: true,
       },
-      reposts: true
     },
   })
 }

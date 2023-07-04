@@ -6,24 +6,28 @@ import { User } from './user.entity'
 
 @Entity('posts')
 export class Post extends Model {
-    @Column()
-		text: string
 
-		@Column({unique: true})
-		videoUrl: string
+	@Column()
+	title: string
 
-		@Column({default: 0})
-		reposts: number
+  @Column()
+	description: string
 
-		@ManyToOne(() => User, (user) => user.posts, {onDelete: 'CASCADE'})
-		user: User
+	@Column({unique: true})
+	videoUrl: string
 
-		@Column()
-		userId: string
+	@Column({unique: true, nullable: true})
+	iconUrl: string
 
-		@OneToMany(() => Comment, (comment) => comment.user)
-    comments: Comment[]
+	@ManyToOne(() => User, (user) => user.posts, {onDelete: 'CASCADE'})
+	user: User
 
-		@OneToMany(() => Like, (like) => like.post)
-    likes: Like[]
+	@Column()
+	userId: string
+
+	@OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[]
+
+	@OneToMany(() => Like, (like) => like.post)
+  likes: Like[]
 }

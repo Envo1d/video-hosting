@@ -1,14 +1,14 @@
 <script setup>
 import { storeToRefs } from 'pinia'
-import Notification from './components/Notification.vue'
 
 const { $generalStore, $userStore } = useNuxtApp()
-const { isLoginOpen, isEditProfileOpen } = storeToRefs($generalStore)
+const { isLoginOpen, isEditProfileOpen, isEditProfileBackOpen } = storeToRefs($generalStore)
 
 onMounted(async () => {
   $generalStore.bodySwitch(false)
   isLoginOpen.value = false
   isEditProfileOpen.value = false
+  isEditProfileBackOpen.value = false
 
   try {
     await $generalStore.hasSessionExpired()
@@ -23,6 +23,7 @@ onMounted(async () => {
 
 watch(() => isLoginOpen.value, val => $generalStore.bodySwitch(val))
 watch(() => isEditProfileOpen.value, val => $generalStore.bodySwitch(val))
+watch(() => isEditProfileBackOpen.value, val => $generalStore.bodySwitch(val))
 watch(() => $userStore.id, async () => {
   try {
     if ($userStore.id)
@@ -37,10 +38,10 @@ watch(() => $userStore.id, async () => {
 
 <template>
   <div>
-    <Notification :notification-type="$generalStore.notificationType" />
     <NuxtPage />
 
     <AuthOverlay v-if="isLoginOpen" />
     <EditProfileOverlay v-if="isEditProfileOpen" />
+    <EditProfileBackgroundOverlay v-if="isEditProfileBackOpen" />
   </div>
 </template>

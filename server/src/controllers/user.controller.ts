@@ -3,7 +3,7 @@ import { unlink } from 'fs'
 import { join } from 'path'
 import { User } from '../entities/user.entity'
 import { UpdateProfileInput } from '../schemas/user.schema'
-import { getFullUser, getUserImageById, updateUserImage, updateUserProfile } from '../services/user.service'
+import { getFullUser, getUserBackImageById, getUserImageById, updateUserBackImage, updateUserImage, updateUserProfile } from '../services/user.service'
 
 export const getMe = async (
 	req: Request,
@@ -19,6 +19,7 @@ export const getMe = async (
 				name: user?.name,
 				image: user?.image,
 				bio: user?.bio,
+				backgroundImage: user?.profileBackgroundImage,
 				subscribers: user?.subscribers.map(sub=>sub.subscriberId),
 				subscriptions: user?.subscriptions.map(sub=>sub.subscribedToId)
 		});
@@ -59,6 +60,27 @@ export const updateProfileImage = async (
 				unlink(join(__dirname.replace('\\controllers', ''), 'public', oldImage.substring(oldImage.indexOf('/images/'))), (err)=> { if(err) throw err })
 			}
 			await updateUserImage(user.id,  process.env.APP_URL+'/images/'+user.image)
+
+			res.status(200).json({
+				status: 'success'
+			});
+		} catch (error) {
+			next(error);
+		}
+}
+
+export const updateProfileBackImage = async (
+	req: Request, 
+	res: Response, 
+	next: NextFunction) => {
+		try {
+			const user = res.locals.user as User
+
+			const oldImage = await getUserBackImageById(user.id)
+			if(oldImage && oldImage !== '') {
+				unlink(join(__dirname.replace('\\controllers', ''), 'public', oldImage.substring(oldImage.indexOf('/images/'))), (err)=> { if(err) throw err })
+			}
+			await updateUserBackImage(user.id,  process.env.APP_URL+'/images/'+req.file?.filename as string)
 
 			res.status(200).json({
 				status: 'success'

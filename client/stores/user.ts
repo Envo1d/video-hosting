@@ -9,6 +9,7 @@ interface RootState {
   email: string
   bio: string
   image: string
+  backgroundImage: string
   subscriptions: string[] | null
   subscribers: string[] | null
 }
@@ -20,6 +21,7 @@ export const useUserStore = defineStore('user', {
     email: '',
     bio: '',
     image: '',
+    backgroundImage: '',
     subscribers: null,
     subscriptions: null,
   } as RootState),
@@ -52,6 +54,7 @@ export const useUserStore = defineStore('user', {
       this.$state.name = res.data.name
       this.$state.image = res.data.image
       this.$state.bio = res.data.bio
+      this.$state.backgroundImage = res.data.backgroundImage
       this.$state.subscribers = res.data.subscribers
       this.$state.subscriptions = res.data.subscriptions
     },
@@ -216,6 +219,19 @@ export const useUserStore = defineStore('user', {
 
       return await $axios({
         url: 'users/upload-image',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        data,
+      })
+    },
+
+    async updateUserBackImage(data: FormData) {
+      const { $axios } = useNuxtApp()
+
+      return await $axios({
+        url: 'users/upload-back-image',
         method: 'POST',
         headers: {
           'Content-Type': 'multipart/form-data',

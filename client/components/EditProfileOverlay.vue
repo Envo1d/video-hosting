@@ -87,18 +87,18 @@ watch(() => userBio.value, () => {
 <template>
   <div
     id="EditProfileOverlay"
-    class="fixed flex justify-center pt-14 md:pt-[105px] z-50 top-0 left-0 w-full h-full bg-black bg-opacity-50 overflow-auto"
+    class="fixed flex justify-center pt-14 md:pt-[105px] z-50 top-0 left-0 w-full h-full bg-main bg-opacity-50 overflow-auto"
   >
     <div
       :class="!uploadedImage ? 'h-[655px]' : 'h-[580px]'"
-      class="relative bg-white w-full max-w-[700px] sm:h-[580px] h-[655px] mx-3 p-4 rounded-lg mb-10"
+      class="relative bg-main border border-solid border-secondary w-full max-w-[700px] sm:h-[580px] h-[655px] mx-3 p-4 rounded-lg mb-10"
     >
-      <div class="absolute flex items-center justify-between w-full p-5 left-0 top-0 border-b border-b-gray-300">
-        <div class="font-medium text-[22px]">
+      <div class="absolute flex items-center justify-between w-full p-5 left-0 top-0 border-b border-b-gray">
+        <div class="font-medium text-[22px] text-white">
           Edit profile
         </div>
         <button @click="() => $generalStore.isEditProfileOpen = false">
-          <Icon size="25" name="mdi:close" />
+          <Icon size="25" name="mdi:close" color="#fff" />
         </button>
       </div>
 
@@ -106,9 +106,9 @@ watch(() => userBio.value, () => {
         <div v-if="!uploadedImage">
           <div
             id="ProfilePhotoSection"
-            class="flex flex-col border-b sm:h-[118px] h-[145px] px-1.5 py-2 w-full"
+            class="flex flex-col border-b border-gray sm:h-[118px] h-[145px] px-1.5 py-2 w-full"
           >
-            <div class="font-semibold text-[15px] sm:mb-0 mb-1 text-gray-700 sm:w-[160px] sm:text-left text-center">
+            <div class="font-semibold text-[15px] sm:mb-0 mb-1 text-gray-700 sm:w-[160px] sm:text-left text-center text-white">
               Profile photo
             </div>
 
@@ -135,9 +135,9 @@ watch(() => userBio.value, () => {
 
           <div
             id="UsernameSection"
-            class="flex flex-col border-b sm:h-[118px] px-1.5 py-2 mt-1.5 w-full"
+            class="flex flex-col border-b border-gray sm:h-[118px] px-1.5 py-2 mt-1.5 w-full"
           >
-            <div class="font-semibold text-[15px] sm:mb-0 mb-1 text-gray-700 sm:w-[160px] sm:text-left text-center">
+            <div class="font-semibold text-[15px] sm:mb-0 mb-1 sm:w-[160px] sm:text-left text-center text-white">
               Username
             </div>
 
@@ -149,7 +149,7 @@ watch(() => userBio.value, () => {
                   input-type="text"
                   max="30"
                 />
-                <div class="text-[11px] text-gray-500 mt-4">
+                <div class="text-[11px] text-gray-500 mt-4 text-white">
                   Usernames can only contain letters, numbers, underscores, and peridots.
                   Changing your username will also change your profile link.
                 </div>
@@ -161,7 +161,7 @@ watch(() => userBio.value, () => {
             id="BioSection"
             class="flex flex-col sm:h-[120px] px-1.5 py-2 mt-2 w-full"
           >
-            <div class="font-semibold text-[15px] sm:mb-0 mb-1 text-gray-700 sm:w-[160px] sm:text-left text-center">
+            <div class="font-semibold text-[15px] sm:mb-0 mb-1 sm:w-[160px] sm:text-left text-center text-white">
               Bio
             </div>
             <div class="flex items-center justify-center sm:-mt-6">
@@ -171,9 +171,9 @@ watch(() => userBio.value, () => {
                   cols="30"
                   rows="4"
                   maxlength="80"
-                  class="resize-none w-full bg-[#f1f1f2] text-gray-800 border border-gray-300 rounded-md py-2.5 px-3 focus:outline-none"
+                  class="resize-none w-full bg-transparent text-white/80 border border-gray rounded-md py-2.5 px-3 focus:outline-none"
                 />
-                <div v-if="userBio" class="text-[11px] text-gray-500">
+                <div v-if="userBio" class="text-[11px] text-white">
                   {{ userBio.length }}/80
                 </div>
               </div>
@@ -192,7 +192,7 @@ watch(() => userBio.value, () => {
       </div>
       <div
         id="ButtonSection"
-        class="absolute p-5 left-0 bottom-0 border-t border-t-gray-300 w-full"
+        class="absolute p-5 left-0 bottom-0 border-t border-t-gray w-full"
       >
         <div
           v-if="!uploadedImage"
@@ -200,7 +200,7 @@ watch(() => userBio.value, () => {
           class="flex items-center justify-end"
         >
           <button
-            class="flex items-center border rounded-sm px-3 py-[6px] hover:bg-gray-100"
+            class="flex items-center border rounded-sm px-3 py-[6px] hover:bg-gray text-white"
             @click="() => $generalStore.isEditProfileOpen = false"
           >
             <span class="px-2 font-medium text-[15px]">Cancel</span>
@@ -209,7 +209,7 @@ watch(() => userBio.value, () => {
           <button
             class="flex items-center text-white border rounded-ms ml-3 px-3 py-[6px]"
             :disabled="!isUpdated"
-            :class="!isUpdated ? 'bg-gray-200' : 'bg-[#f02c56]'"
+            :class="!isUpdated ? 'bg-gray' : 'bg-secondary hover:bg-primary'"
             @click="updateUserInfo()"
           >
             <span class="mx-4 font-medium text-[15px]">Apply</span>
@@ -222,14 +222,14 @@ watch(() => userBio.value, () => {
           class="flex items-center justify-end"
         >
           <button
-            class="flex items-center border rounded-sm px-3 py-[6px] hover:bg-gray-100"
+            class="flex items-center border rounded-sm px-3 py-[6px] hover:bg-gray text-white"
             @click="() => uploadedImage = null"
           >
             <span class="px-2 font-medium text-[15px]">Cancel</span>
           </button>
 
           <button
-            class="flex items-center bg-[#f02c56] text-white border rounded-ms ml-3 px-3 py-[6px]"
+            class="flex items-center bg-secondary hover:bg-primary text-white border rounded-ms ml-3 px-3 py-[6px]"
             @click="cropAndUpdateImage()"
           >
             <span class="mx-4 font-medium text-[15px]">Apply</span>

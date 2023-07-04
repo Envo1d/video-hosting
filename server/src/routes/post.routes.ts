@@ -10,7 +10,9 @@ const upload = multer({storage: storage, fileFilter: videoFilter})
 
 const router = Router()
 
-router.post('/', deserializeUser, requireUser, upload.single('file'), validateVideoUpload,  uploadPost)
+router.post('/', deserializeUser, requireUser, upload.fields([{
+	name: 'file', maxCount: 1
+}, {name: 'icon', maxCount: 1}]), validateVideoUpload,  uploadPost)
 router.get('/get-by-id', getPostsByUserId)
 router.get('/', show)
 router.delete('/', deserializeUser, requireUser ,deletePost)

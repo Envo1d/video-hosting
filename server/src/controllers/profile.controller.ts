@@ -32,6 +32,7 @@ export const show = async (
 						bio: user?.bio,
 						name: user?.name,
 						image: user?.image,
+						backgroundImage: user?.profileBackgroundImage,
 						subscribers: user?.subscribers.length,
 						subscriptions: user?.subscriptions.length
 					}

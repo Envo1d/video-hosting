@@ -5,6 +5,7 @@ export interface ILoginData {
 
 export interface IRegisterData extends ILoginData {
   name: string
+  nickname: string
   passwordConfirm: string
 }
 

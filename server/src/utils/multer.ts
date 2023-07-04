@@ -49,7 +49,11 @@ export const videoFilter = (
 	file: Express.Multer.File,
 	callback: FileFilterCallback
 ): void => {
-	if (file.mimetype === 'video/mp4' || file.size <= MAX_FILE_SIZE) {
+	if (file.mimetype === 'video/mp4' ||
+		file.mimetype === 'image/png' ||
+		file.mimetype === 'image/jpg' ||
+		file.mimetype === 'image/jpeg' ||
+		file.size <= MAX_FILE_SIZE) {
 		callback(null, true)
 } else {
 		callback(null, false)

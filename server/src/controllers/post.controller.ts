@@ -12,11 +12,17 @@ export const uploadPost = async (
 	next: NextFunction) => {
 		try {
 			const user = res.locals.user as User
-			const {text} = req.body
+			const {title, description} = req.body
 
-			const filePath = process.env.APP_URL+'/videos/'+req.file?.filename as string
+			const files = req?.files as { [fieldname: string]: Express.Multer.File[] };
+
+    const file = files.file[0]
+    const icon = files.icon[0]
+
+			const filePath = process.env.APP_URL+'/videos/'+file?.filename as string
+			const iconPath = process.env.APP_URL+'/images/'+icon?.filename as string
 			
-			await createPost(user.id, filePath, text)
+			await createPost(user.id, filePath, iconPath, title, description)
 
 			res.status(200).json({
 				status: 'success'

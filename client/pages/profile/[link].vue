@@ -11,7 +11,7 @@ const show = ref(false)
 
 const isFollow = computed(() => {
   if ($userStore.id) {
-    const res = $userStore.subscriptions.includes(route.params.id)
+    const res = $userStore.subscriptions.includes($profileStore.id)
 
     if (res)
       return true
@@ -22,10 +22,10 @@ const isFollow = computed(() => {
 
 onMounted(async () => {
   try {
-    await $profileStore.getProfile(route.params.id)
+    await $profileStore.getProfile(route.params.link)
     useSeoMeta({
-      title: `${name.value} Profile`,
-      ogTitle: `${name.value} Profile`,
+      title: `${name.value}`,
+      ogTitle: `${name.value}`,
     })
   }
   catch (error) {
@@ -36,25 +36,16 @@ onMounted(async () => {
 async function actionUser(type) {
   try {
     if (type === 'follow')
-      await $userStore.follow(route.params.id)
-    else await $userStore.unfollow(route.params.id)
+      await $userStore.follow($profileStore.id)
+    else await $userStore.unfollow($profileStore.id)
     await $userStore.getUser()
     await $generalStore.getRandomUsers()
-    await $profileStore.getProfile(route.params.id)
+    await $profileStore.getProfile(route.params.link)
   }
   catch (error) {
     console.error(error)
   }
 }
-
-onMounted(async () => {
-  try {
-    await $profileStore.getProfile(route.params.id)
-  }
-  catch (error) {
-    console.error(error)
-  }
-})
 
 watch(() => posts.value, () => {
   setTimeout(() => show.value = true, 300)
@@ -81,7 +72,7 @@ watch(() => posts.value, () => {
             {{ $profileStore.name }}
           </div>
           <div class="truncate text-[18px] text-white">
-            {{ $profileStore.name }}
+            {{ $profileStore.nickname }}
           </div>
         </div>
         <div>

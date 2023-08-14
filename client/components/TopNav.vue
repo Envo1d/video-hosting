@@ -95,7 +95,7 @@ function logout() {
             >
               <NuxtLink
                 class="flex items-center justify-start py-3 px-2 hover:text-secondary cursor-pointer"
-                :to="`/profile/${$userStore.id}`"
+                :to="`/profile/${$userStore.link}`"
                 @click="() => showMenu = false"
               >
                 <Icon name="ph:user" size="22" />

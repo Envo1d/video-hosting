@@ -25,7 +25,9 @@ export const getByPostId = async (postId: string) => {
 			user: {
 				id: true,
 				image: true,
-				name: true
+				name: true,
+				nickname: true,
+				link: true
 			}
 		}
 	})

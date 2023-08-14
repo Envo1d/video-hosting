@@ -57,7 +57,9 @@ export const getFollowingPosts= async (userId: string) => {
       user: {
         id: true,
         name: true,
-        image: true
+        image: true,
+        nickname: true,
+        link: true
       },
       likes: {
         id: true,
@@ -91,6 +93,8 @@ export const getSuggested = async (amount: number, userId: string) => {
       id: true,
       name: true,
       image: true,
+      link: true,
+      nickname: true,
       subscribers: {
         id: false,
         subscribedToId: false,
@@ -117,7 +121,9 @@ export const getFollowing = async (amount: number, userId: string) => {
       subscribedTo: {
         id: true,
         name: true,
-        image: true
+        image: true,
+        link: true,
+        nickname: true,
       },
       subscriberId: false
     }

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { getByPostId } from '../services/comment.service'
 import { getByUserId } from '../services/post.service'
-import { getFullUser } from '../services/user.service'
+import { getFullUserByLink } from '../services/user.service'
 import AppError from '../utils/appError'
 
 export const show = async (
@@ -10,9 +10,13 @@ export const show = async (
 	next: NextFunction
 ) => {
 	try {
-			const id  = req.query.id
-			if(id)
+			const link  = req.query.link
+			if(link)
 			{
+				const users = await getFullUserByLink(link as string)
+				const user = users[0]
+				const id = user.id
+				
 				const posts = await getByUserId(id as string)
 
 				// FIXME: comments
@@ -22,8 +26,7 @@ export const show = async (
 					post.comments = await getByPostId(post.id)					
 				}
 				
-				const users = await getFullUser(id as string)
-				const user = users[0]
+				
 
 				res.status(200).json({
 					posts: posts,
@@ -32,6 +35,8 @@ export const show = async (
 						bio: user?.bio,
 						name: user?.name,
 						image: user?.image,
+						nickname: user?.nickname,
+						link: user?.link,
 						backgroundImage: user?.profileBackgroundImage,
 						subscribers: user?.subscribers.length,
 						subscriptions: user?.subscriptions.length

@@ -46,8 +46,8 @@ async function unlikePost() {
 }
 
 const isFollow = computed(() => {
-  if ($userStore.id) {
-    const res = $userStore.subscriptions?.includes(route.params.id as string)
+  if ($userStore.id && $generalStore.selectedPost) {
+    const res = $userStore.subscriptions?.includes($generalStore.selectedPost?.user.id as string)
 
     if (res)
       return true
@@ -63,11 +63,11 @@ async function actionUser(type: 'follow' | 'unfollow') {
   }
   try {
     if (type === 'follow')
-      await $userStore.follow(route.params.id as string)
-    else await $userStore.unfollow(route.params.id as string)
+      await $userStore.follow($generalStore.selectedPost?.user.id as string)
+    else await $userStore.unfollow($generalStore.selectedPost?.user.id as string)
     await $userStore.getUser()
     await $generalStore.getRandomUsers()
-    await $profileStore.getProfile(route.params.id as string)
+    await $profileStore.getProfile($generalStore.selectedPost?.user.link as string)
   }
   catch (error) {
     console.error(error)
@@ -195,11 +195,11 @@ watch(() => comment.value, (com) => {
           <div class="flex flex-col">
             <div class="flex flex-row justify-between">
               <div class="flex flex-row">
-                <NuxtLink :to="`/profile/${selectedPost?.user.id}`">
+                <NuxtLink :to="`/profile/${selectedPost?.user.link}`">
                   <img :src="selectedPost?.user.image" class="w-24 rounded-full mr-4">
                 </NuxtLink>
                 <div class="flex flex-col mt-1.5">
-                  <NuxtLink :to="`/profile/${selectedPost?.user.id}`">
+                  <NuxtLink :to="`/profile/${selectedPost?.user.link}`">
                     <span class="text-2xl font-semibold">{{ selectedPost?.user.name }}</span>
                   </NuxtLink>
                   <span class="mt-[2px] text-xs text-gray">Published on {{ $generalStore.formatDate(selectedPost?.created_at) }}</span>
@@ -259,12 +259,12 @@ watch(() => comment.value, (com) => {
             class="flex items-center justify-between mt-4"
           >
             <div class="flex items-center relative w-full">
-              <NuxtLink :to="`/profile/${com.user.id}`">
+              <NuxtLink :to="`/profile/${com.user.link}`">
                 <img :src="com.user.image" width="40" class="absolute top-0 rounded-full lg:mx-0 mx-auto">
               </NuxtLink>
               <div class="ml-14 pt-0.5 w-full">
                 <div class="font-semibold flex items-center justify-between text-[18px]">
-                  <NuxtLink :to="`/profile/${com.user.id}`">
+                  <NuxtLink :to="`/profile/${com.user.link}`">
                     {{ com.user.name }}
                   </NuxtLink>
                   <Icon v-if="$userStore.id === com.user.id" class="cursor-pointer text-gray hover:text-secondary" size="25" name="ic:round-delete-outline" @click="() => deleteComment(com.id)" />

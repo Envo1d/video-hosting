@@ -40,6 +40,10 @@ export const findUserById = async (userId: string) => {
   return await userRepo.findOneBy({ id: userId });
 };
 
+export const findUserByLink = async (userLink: string) => {
+  return await userRepo.findOneBy({link: userLink})
+}
+
 export const getUserImageById = async (userId: string) => {
   return await userRepo.findOneBy({id:userId}).then(user => user?.image || undefined)
 }
@@ -48,17 +52,48 @@ export const getUserBackImageById = async (userId: string) => {
   return await userRepo.findOneBy({id:userId}).then(user => user?.profileBackgroundImage || undefined)
 }
 
-export const getFullUser = async (userId:string) =>{
+export const getFullUser = async (userId: string) =>{
   return await userRepo.find({
     relations: ['posts', 'subscriptions', 'subscribers'],
     where: {
-      id: userId
+      id: userId,
     },
     select: {
       id: true,
       name: true,
       bio: true,
       image: true,
+      profileBackgroundImage: true,
+      link: true,
+      nickname: true,
+      posts: {
+        likes: {
+          id: true
+        }
+      },
+      subscriptions : {
+        subscribedToId: true
+      },
+      subscribers: {
+        subscriberId: true
+      }
+    }
+  })
+}
+
+export const getFullUserByLink = async (userLink: string) =>{
+  return await userRepo.find({
+    relations: ['posts', 'subscriptions', 'subscribers'],
+    where: {
+      link: userLink
+    },
+    select: {
+      id: true,
+      name: true,
+      bio: true,
+      image: true,
+      link: true,
+      nickname: true,
       profileBackgroundImage: true,
       posts: {
         likes: {

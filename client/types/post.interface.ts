@@ -8,6 +8,8 @@ export interface IPost {
     id: string
     image: string
     name: string
+    nickname: string
+    link: string
   }
   likes: ILike[]
   created_at: string
@@ -31,6 +33,8 @@ export interface IComment {
     id: string
     name: string
     image: string
+    nickname: string
+    link: string
   }
 
   parentComment: IComment

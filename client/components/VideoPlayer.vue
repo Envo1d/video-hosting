@@ -132,7 +132,7 @@ function onVideoEnded() {
 
 function onPlayPauseClick() {
   if (video.value?.paused) {
-    video.value.play()
+    video.value.play().catch(() => isPlaying.value = false)
     isEnded.value = false
     video.value.addEventListener('ended', onVideoEnded, false)
   }
@@ -281,7 +281,7 @@ function loadedData() {
         </li>
       </ul>
     </div>
-    <video ref="video" preload="auto" allowfullscreen type="video/mp4" :src="videoUrl" @loadeddata="() => loadedData()" @click="onPlayPauseClick" />
+    <video ref="video" preload="auto" allowfullscreen :src="videoUrl" @loadeddata="() => loadedData()" @click="onPlayPauseClick" />
   </div>
 </template>
 

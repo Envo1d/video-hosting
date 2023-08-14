@@ -73,7 +73,7 @@ function loadedData() {
         </div>
       </div>
       <div class="flex flex-row mt-2">
-        <div class="cursor-pointer mt-2" @click="router.push(`/profile/${post.user.id}`)">
+        <div class="cursor-pointer mt-2" @click="router.push(`/profile/${post.user.link}`)">
           <img :src="post.user.image" class="rounded-full max-h-[35px]" width="35">
         </div>
         <div class="flex flex-col items-start">

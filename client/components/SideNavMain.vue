@@ -28,7 +28,7 @@ const router = useRouter()
           v-for="fol in $generalStore.following"
           :key="fol.id"
         >
-          <div class="cursor-pointer" @click="() => router.push(`/profile/${fol.id}`)">
+          <div class="cursor-pointer" @click="() => router.push(`/profile/${fol.link}`)">
             <MenuItemFollow :user="fol" />
           </div>
         </div>

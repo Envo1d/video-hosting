@@ -21,6 +21,9 @@ export class Comment extends Model {
 		@Column()
 		postId: string
 
+		@Column({unique: true, nullable: true})
+		roomId!: string
+
 		@OneToMany(() => CommentLike, (like) => like.comment)
     likes: CommentLike[]
 

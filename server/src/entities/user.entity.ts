@@ -64,7 +64,7 @@ export class User extends Model {
 
     @BeforeInsert()
     createLink() {
-      this.link = `@${this.nickname}`
+      this.link = this.nickname
     }
 
     static async comparePasswords(

@@ -6,6 +6,8 @@ interface RootState {
   name: string
   bio: string
   image: string
+  nickname: string
+  link: string
   backgroundImage: string
   post: IPost | null
   posts: IPost[] | null
@@ -20,6 +22,8 @@ export const useProfileStore = defineStore('profile', {
     name: '',
     bio: '',
     image: '',
+    nickname: '',
+    link: '',
     backgroundImage: '',
     post: null,
     posts: null,
@@ -28,7 +32,7 @@ export const useProfileStore = defineStore('profile', {
     followers: 0,
   } as RootState),
   actions: {
-    async getProfile(userId: string) {
+    async getProfile(userLink: string) {
       const { $axios } = useNuxtApp()
 
       this.resetUser()
@@ -37,7 +41,7 @@ export const useProfileStore = defineStore('profile', {
         url: 'profile/',
         method: 'GET',
         params: {
-          id: userId,
+          link: userLink,
         },
       })
 
@@ -45,6 +49,8 @@ export const useProfileStore = defineStore('profile', {
       this.$state.name = res.data.user.name
       this.$state.bio = res.data.user.bio
       this.$state.image = res.data.user.image
+      this.$state.link = res.data.user.link
+      this.$state.nickname = res.data.user.nickname
       this.$state.backgroundImage = res.data.user.backgroundImage
       this.$state.posts = res.data.posts
       this.following = res.data.user.subscriptions
@@ -68,6 +74,8 @@ export const useProfileStore = defineStore('profile', {
       this.$state.name = ''
       this.$state.bio = ''
       this.$state.image = ''
+      this.$state.link = ''
+      this.$state.nickname = ''
       this.$state.backgroundImage = ''
       this.$state.posts = null
       this.$state.following = 0

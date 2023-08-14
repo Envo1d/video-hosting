@@ -106,7 +106,7 @@ async function createPost() {
     if (res.status === 200) {
       setTimeout(() => {
         isUploading.value = false
-        router.push(`/profile/${$userStore.id}`)
+        router.push(`/profile/${$userStore.link}`)
       }, 1000)
     }
   }

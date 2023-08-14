@@ -24,7 +24,9 @@ export const getAll = async () => {
       user: {
         id: true,
         name: true,
-        image: true
+        image: true,
+        nickname: true,
+        link: true
       },
       likes: {
         id: true,
@@ -104,7 +106,9 @@ export const getById = async (id: string) => {
       user: {
         id: true,
         name: true,
-        image: true
+        image: true,
+        nickname: true,
+        link: true
       },
       likes: {
         id: true,

@@ -52,7 +52,7 @@ async function update() {
     const res = await $userStore.updateUserBackImage(data)
     if (res.status === 200) {
       await $userStore.getUser()
-      await $profileStore.getProfile($userStore.id)
+      await $profileStore.getProfile($userStore.link)
       $generalStore.isEditProfileBackOpen = false
     }
   }

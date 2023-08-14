@@ -9,6 +9,8 @@ interface RootState {
   email: string
   bio: string
   image: string
+  nickname: string
+  link: string
   backgroundImage: string
   subscriptions: string[] | null
   subscribers: string[] | null
@@ -21,6 +23,8 @@ export const useUserStore = defineStore('user', {
     email: '',
     bio: '',
     image: '',
+    link: '',
+    nickname: '',
     backgroundImage: '',
     subscribers: null,
     subscriptions: null,
@@ -54,6 +58,8 @@ export const useUserStore = defineStore('user', {
       this.$state.name = res.data.name
       this.$state.image = res.data.image
       this.$state.bio = res.data.bio
+      this.$state.link = res.data.link
+      this.$state.nickname = res.data.nickname
       this.$state.backgroundImage = res.data.backgroundImage
       this.$state.subscribers = res.data.subscribers
       this.$state.subscriptions = res.data.subscriptions

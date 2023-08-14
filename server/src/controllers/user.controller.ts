@@ -19,6 +19,8 @@ export const getMe = async (
 				name: user?.name,
 				image: user?.image,
 				bio: user?.bio,
+				nickname: user?.nickname,
+				link: user?.link,
 				backgroundImage: user?.profileBackgroundImage,
 				subscribers: user?.subscribers.map(sub=>sub.subscriberId),
 				subscriptions: user?.subscriptions.map(sub=>sub.subscribedToId)

@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import type { ILitePost, IPost } from '~/types/post.interface'
+import type { IUser } from '~/types/user.interface'
 import { useUserStore } from './user'
 
 interface RootState {
@@ -12,8 +13,8 @@ interface RootState {
   posts: IPost[] | null
   randomPosts: ILitePost[] | null
   followingPosts: IPost[] | null
-  suggested: null
-  following: null
+  suggested: IUser[] | null
+  following: IUser[] | null
 }
 
 export const useGeneralStore = defineStore('general', {
@@ -49,23 +50,52 @@ export const useGeneralStore = defineStore('general', {
     async hasSessionExpired() {
       const { $axios } = useNuxtApp()
 
-      await $axios.interceptors.response.use((response) => {
-        return response
-      }, async (error: any) => {
-        switch (error.response.status) {
-          case 401:
-          case 403:
-          case 419:
-            useUserStore().resetUser()
-            window.location.href = '/'
-            break
-          case 501:
-            alert('Oops, something went wrong!')
-            break
-          default: return Promise.reject(error)
+      await $axios.interceptors.response.use(config => config, async (error) => {
+        const originalRequest = error.config
+        if (
+          (error?.response?.status === 401
+            || error?.response?.status === 403
+            || error?.response?.status === 419)
+          && error.config
+          && !error.config._isRetry
+        ) {
+          originalRequest._isRetry = true
+          try {
+            await useUserStore().getTokens()
+            return $axios.request(originalRequest)
+          }
+          catch (error) {
+            if (catchError(error) === 'Could not refresh access token') {
+              useUserStore().resetUser()
+              window.location.href = '/'
+            }
+          }
         }
+
+        throw error
       })
     },
+
+    // async hasSessionExpired() {
+    //   const { $axios } = useNuxtApp()
+
+    //   await $axios.interceptors.response.use((response) => {
+    //     return response
+    //   }, async (error: any) => {
+    //     switch (error.response.status) {
+    //       case 401:
+    //       case 403:
+    //       case 419:
+    //         useUserStore().resetUser()
+    //         window.location.href = '/'
+    //         break
+    //       case 501:
+    //         alert('Oops, something went wrong!')
+    //         break
+    //       default: return Promise.reject(error)
+    //     }
+    //   })
+    // },
 
     async getRandomUsers() {
       const { $axios } = useNuxtApp()

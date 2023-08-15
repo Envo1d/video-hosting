@@ -206,7 +206,7 @@ export const useUserStore = defineStore('user', {
         url: 'profile/',
         method: 'GET',
         params: {
-          id: post.user.id,
+          link: post.user.link,
         },
       })
 

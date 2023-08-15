@@ -21,6 +21,12 @@ useSeoMeta({
 
 definePageMeta({ middleware: 'auth' })
 
+const isFilled = computed(() => {
+  if (caption.value.length === 0 || description.value.length === 0 || fileData.value === null || iconData.value === null)
+    return false
+  return true
+})
+
 watch(() => caption.value, (caption) => {
   if (caption.length >= 100) {
     errorType.value = 'caption'
@@ -266,7 +272,9 @@ function clearIcon() {
                 Discard
               </button>
               <button
-                class="px-10 py-2.5 mt-8 border text-[16px] text-white bg-secondary hover:bg-secondary/80 rounded-lg"
+                class="px-10 py-2.5 mt-8 border text-[16px] text-white rounded-lg"
+                :class="!isFilled ? 'bg-primary hover:bg-primary/80' : 'bg-secondary hover:bg-secondary/80'"
+                :disabled="!isFilled"
                 @click="createPost"
               >
                 Post

@@ -4,8 +4,8 @@ const { $generalStore } = useNuxtApp()
 definePageMeta({ middleware: 'auth' })
 
 useSeoMeta({
-  title: 'Following Page',
-  ogTitle: 'Following Page',
+  title: 'Subscription Page',
+  ogTitle: 'Subscription Page',
 })
 
 onMounted(async () => {

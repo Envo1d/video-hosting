@@ -40,7 +40,7 @@ async function cropAndUpdateImage() {
   try {
     await $userStore.updateUserImage(data)
     await $userStore.getUser()
-    await $profileStore.getProfile(route.params.id)
+    await $profileStore.getProfile(route.params.link)
 
     $generalStore.updateSideMenuImage($generalStore.suggested, $userStore)
     $generalStore.updateSideMenuImage($generalStore.following, $userStore)
@@ -57,7 +57,7 @@ async function updateUserInfo() {
   try {
     await $userStore.updateUser(userName.value, userBio.value)
     await $userStore.getUser()
-    await $profileStore.getProfile(route.params.id)
+    await $profileStore.getProfile(route.params.link)
 
     userName.value = name.value
     userBio.value = bio.value
@@ -151,7 +151,6 @@ watch(() => userBio.value, () => {
                 />
                 <div class="text-[11px] text-gray-500 mt-4 text-white">
                   Usernames can only contain letters, numbers, underscores, and peridots.
-                  Changing your username will also change your profile link.
                 </div>
               </div>
             </div>

@@ -1,50 +1,32 @@
 import { NextFunction, Request, Response } from 'express'
-import fs from 'fs'
-import path from 'path'
+import path from 'node:path'
+import { randomUUID } from 'node:crypto'
 import sharp from 'sharp'
 import AppError from '../utils/appError'
+import { publicDirectory, removeUpload } from '../utils/uploads'
 
-export const validateImageUpload = async (
-  req: Request<{}, {}, {left: string, top: string, width: string, height: string}>,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-		const file = req?.file
-		const {height, width, top, left} = req.body
-
-		if(!file && (height === '' || width === '' || top === '' || left === ''))
-		return next(
-			new AppError(400, `The image field required and image size not se properly`)
-		);
-		else if(!file)
-		return next(
-			new AppError(400, `The image field required`)
-		);
-
-		const filePath = path.join(__dirname.replace('\\middleware', ''), 'public/images/', req.file?.filename as string)
-		
-		if(height === '' || width === '' || top === '' || left === '') {
-			fs.unlink(filePath, (err) => {if(err) throw err})
-			return next(new AppError(400, 'Image size not set properly'))
+export const validateImageUpload = async (req: Request, res: Response, next: NextFunction) => {
+	const file = req.file
+	if (!file) return next(new AppError(400, 'The image field is required'))
+	try {
+		const values = ['left', 'top', 'width', 'height'].map(key => req.body?.[key])
+		const [left, top, width, height] = values.map(Number)
+		if (values.some(value => value === undefined || value === '') ||
+			![left, top, width, height].every(Number.isInteger) || left < 0 || top < 0 || width <= 0 || height <= 0) {
+			throw new AppError(400, 'Image crop dimensions must be valid integers')
 		}
-
-		const image = await sharp(filePath)
-
-		const newFileName = Date.now().toString()+ req?.file?.originalname.substring(0, req?.file?.originalname.indexOf(path.extname(req?.file?.originalname))) + '.jpeg'
-
-		const newFilePath = path.join(__dirname.replace('\\middleware', ''), 'public/images/', newFileName)
-
-		const buffer = await image.extract({left: parseInt(left), top: parseInt(top), width: parseInt(width), height: parseInt(height)}).toBuffer()
-
-		fs.writeFile(newFilePath, buffer, (err)=>{if(err) throw err})
-
-		res.locals.user.image = newFileName
-
-		fs.unlink(filePath, (err) => {if(err) throw err})
-
-    next();
-  } catch (err: any) {
-    next(err);
-  }
-};
+		const image = sharp(file.path)
+		const metadata = await image.metadata()
+		if (left + width > (metadata.width || 0) || top + height > (metadata.height || 0)) {
+			throw new AppError(400, 'Image crop exceeds the image dimensions')
+		}
+		const filename = randomUUID() + '.jpeg'
+		await image.extract({ left, top, width, height }).jpeg().toFile(path.join(publicDirectory, 'images', filename))
+		res.locals.user.image = filename
+		await removeUpload(file.path)
+		next()
+	} catch (error) {
+		await removeUpload(file.path).catch(() => undefined)
+		next(error instanceof AppError ? error : new AppError(400, 'Invalid image'))
+	}
+}

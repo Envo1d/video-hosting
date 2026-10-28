@@ -6,7 +6,7 @@ const { $generalStore } = useNuxtApp()
 <template>
   <div
     id="AuthOverlay"
-    class="fixed flex border items-center justify-center z-50 top-0 left-0 w-full h-full bg-white bg-opacity-20"
+    class="fixed flex border items-center justify-center z-50 top-0 left-0 w-full h-full bg-white/20"
   >
     <div class="relative bg-main border border-secondary border-solid w-full max-w-[470px] h-max p-4 rounded-lg">
       <div class="w-full flex justify-end">

@@ -1,23 +1,16 @@
 import { createClient } from 'redis'
 
-const redisUrl = 'redis://localhost:6379';
+const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 
 const redisClient = createClient({
   url: redisUrl,
 });
 
-const connectRedis = async () => {
-  try {
-    await redisClient.connect();
-    console.log('Redis client connected successfully');
-    redisClient.set('try', 'Hello Welcome to Express with TypeORM');
-  } catch (error) {
-    console.log(error);
-    setTimeout(connectRedis, 5000);
-  }
-};
+redisClient.on('error', error => console.error('Redis connection error:', error.message))
 
-connectRedis();
+export const connectRedis = async () => {
+  await redisClient.connect()
+  await redisClient.set('try', 'Hello Welcome to Express with TypeORM')
+}
 
 export default redisClient;
-

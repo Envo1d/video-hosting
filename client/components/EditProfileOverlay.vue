@@ -87,7 +87,7 @@ watch(() => userBio.value, () => {
 <template>
   <div
     id="EditProfileOverlay"
-    class="fixed flex justify-center pt-14 md:pt-[105px] z-50 top-0 left-0 w-full h-full bg-main bg-opacity-50 overflow-auto"
+    class="fixed flex justify-center pt-14 md:pt-[105px] z-50 top-0 left-0 w-full h-full bg-main/50 overflow-auto"
   >
     <div
       :class="!uploadedImage ? 'h-[655px]' : 'h-[580px]'"
@@ -98,7 +98,7 @@ watch(() => userBio.value, () => {
           Edit profile
         </div>
         <button @click="() => $generalStore.isEditProfileOpen = false">
-          <Icon size="25" name="mdi:close" color="#fff" />
+          <Icon size="25" name="mdi:close" style="color: #fff" />
         </button>
       </div>
 
@@ -170,7 +170,7 @@ watch(() => userBio.value, () => {
                   cols="30"
                   rows="4"
                   maxlength="80"
-                  class="resize-none w-full bg-transparent text-white/80 border border-gray rounded-md py-2.5 px-3 focus:outline-none"
+                  class="resize-none w-full bg-transparent text-white/80 border border-gray rounded-md py-2.5 px-3 focus:outline-hidden"
                 />
                 <div v-if="userBio" class="text-[11px] text-white">
                   {{ userBio.length }}/80
@@ -199,7 +199,7 @@ watch(() => userBio.value, () => {
           class="flex items-center justify-end"
         >
           <button
-            class="flex items-center border rounded-sm px-3 py-[6px] hover:bg-gray text-white"
+            class="flex items-center border rounded-xs px-3 py-[6px] hover:bg-gray text-white"
             @click="() => $generalStore.isEditProfileOpen = false"
           >
             <span class="px-2 font-medium text-[15px]">Cancel</span>
@@ -221,7 +221,7 @@ watch(() => userBio.value, () => {
           class="flex items-center justify-end"
         >
           <button
-            class="flex items-center border rounded-sm px-3 py-[6px] hover:bg-gray text-white"
+            class="flex items-center border rounded-xs px-3 py-[6px] hover:bg-gray text-white"
             @click="() => uploadedImage = null"
           >
             <span class="px-2 font-medium text-[15px]">Cancel</span>

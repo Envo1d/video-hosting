@@ -54,7 +54,7 @@ export const getUserBackImageById = async (userId: string) => {
 
 export const getFullUser = async (userId: string) =>{
   return await userRepo.find({
-    relations: ['posts', 'subscriptions', 'subscribers'],
+    relations: { posts: true, subscriptions: true, subscribers: true },
     where: {
       id: userId,
     },
@@ -83,7 +83,7 @@ export const getFullUser = async (userId: string) =>{
 
 export const getFullUserByLink = async (userLink: string) =>{
   return await userRepo.find({
-    relations: ['posts', 'subscriptions', 'subscribers'],
+    relations: { posts: true, subscriptions: true, subscribers: true },
     where: {
       link: userLink
     },
@@ -116,7 +116,7 @@ export const findUser = async (query: Object) => {
 
 export const signTokens = async(user: User) => {
 	// redis session
-	redisClient.set(user.id, JSON.stringify(user), {
+	await redisClient.set(user.id, JSON.stringify(user), {
 		EX: config.get<number>('redisCacheExpiresIn') * 60 * 24 * 30
 	})
 

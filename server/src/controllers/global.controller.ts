@@ -29,7 +29,6 @@ export const getRandomPosts = async (
 ) => {
 	try {
 		const exclude  = req.query.exclude as string
-		console.log(exclude)
 		const posts = await getRandom(exclude)
 		
 		res.status(200).json({

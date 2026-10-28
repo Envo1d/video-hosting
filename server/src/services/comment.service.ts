@@ -9,15 +9,16 @@ export const createComment = async (userId: string, postId: string, text: string
   ) as Comment;
 }
 
-export const deleteComment = async (commentId: string) => {
+export const deleteComment = async (commentId: string, userId: string) => {
 	return await commentRepo.delete({
-		id: commentId
+		id: commentId,
+		userId
 	})
 }
 
 export const getByPostId = async (postId: string) => {
 	return await commentRepo.find({
-		relations: ['user'],
+		relations: { user: true },
 		where: {postId},
 		select: {
 			id: true,

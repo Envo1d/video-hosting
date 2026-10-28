@@ -52,11 +52,11 @@ function logout() {
 
       <div class="hidden md:flex items-center bg-[#EBEBEB]/10 p-1 rounded-full max-w-[830px] w-full max-h-[44px]">
         <input
-          type="text" class="w-full pl-3 my-2 bg-transparent placeholder-white/40 text-[15px] focus:outline-none text-white/80"
+          type="text" class="w-full pl-3 my-2 bg-transparent placeholder-white/40 text-[15px] focus:outline-hidden text-white/80"
           placeholder="Search"
         >
         <div class="px-3 py-1 flex items-center">
-          <Icon name="ri:search-line" color="#ffffff" size="22" />
+          <Icon name="ri:search-line" style="color: #ffffff" size="22" />
         </div>
       </div>
 
@@ -65,7 +65,7 @@ function logout() {
           class="flex items-center rounded-2xl px-3 py-[6px] hover:bg-secondary"
           @click="() => isLoggedIn()"
         >
-          <Icon name="ic:round-file-upload" color="#fff" size="22" />
+          <Icon name="ic:round-file-upload" style="color: #fff" size="22" />
         </button>
 
         <div v-if="!$userStore.id" class="flex items-center">
@@ -73,7 +73,7 @@ function logout() {
             class="flex items-center rounded-2xl px-3 py-[6px] hover:bg-secondary"
             @click="() => $generalStore.isLoginOpen = true"
           >
-            <Icon name="ion:log-in-outline" color="#fff" size="25" />
+            <Icon name="ion:log-in-outline" style="color: #fff" size="25" />
           </button>
         </div>
 
@@ -81,7 +81,7 @@ function logout() {
           <button
             class="flex items-center rounded-2xl mr-5 px-3 py-[6px] hover:bg-secondary"
           >
-            <Icon color="#fff" size="22" name="ion:notifications-outline" />
+            <Icon style="color: #fff" size="22" name="ion:notifications-outline" />
           </button>
 
           <div class="relative">

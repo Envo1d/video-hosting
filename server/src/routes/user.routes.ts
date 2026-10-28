@@ -9,7 +9,7 @@ import { updateProfileSchema } from '../schemas/user.schema'
 import { imageFilter, storage } from '../utils/multer'
 import { validateBackImageUpload } from '../middleware/validateBackImageUpload'
 
-const upload = multer({storage: storage, fileFilter: imageFilter})
+const upload = multer({storage, fileFilter: imageFilter, limits: { fileSize: 10 * 1024 * 1024, files: 1 }})
 
 const router = Router()
 

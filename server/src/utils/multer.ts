@@ -1,61 +1,29 @@
 import { Request } from 'express'
 import multer, { FileFilterCallback } from 'multer'
-import path from 'path'
+import path from 'node:path'
+import { randomUUID } from 'node:crypto'
+import AppError from './appError'
+import { publicDirectory } from './uploads'
 
-type DestinationCallback = (error: Error | null, destination: string) => void
-type FileNameCallback = (error: Error | null, filename: string) => void
-
-const MAX_FILE_SIZE = 2147483648
+export const MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024
+const imageTypes = new Set(['image/png', 'image/jpg', 'image/jpeg'])
 
 export const storage = multer.diskStorage({
-	destination: (
-		request: Request,
-		file: Express.Multer.File,
-		callback: DestinationCallback
-	): void => {
-		if(file.mimetype === 'video/mp4')
-		callback(null, path.resolve(__dirname.replace('\\utils', ''), 'public/videos/'))
-		else
-		callback(null, path.resolve(__dirname.replace('\\utils', ''), 'public/images/'))
+	destination: (_request, file, callback) => {
+		callback(null, path.join(publicDirectory, file.mimetype === 'video/mp4' ? 'videos' : 'images'))
 	},
-
-	filename: (
-		req: Request,
-		file: Express.Multer.File,
-		callback: FileNameCallback
-	): void => {
-		callback(null, Date.now().toString()+path.extname(file.originalname))
+	filename: (_request, file, callback) => {
+		callback(null, randomUUID() + path.extname(file.originalname))
 	}
 })
 
-export const imageFilter = (
-	request: Request,
-	file: Express.Multer.File,
-	callback: FileFilterCallback
-): void => {
-	if (
-		file.mimetype === 'image/png' ||
-		file.mimetype === 'image/jpg' ||
-		file.mimetype === 'image/jpeg'
-) {
-		callback(null, true)
-} else {
-		callback(null, false)
-}
+export const imageFilter = (_request: Request, file: Express.Multer.File, callback: FileFilterCallback) => {
+	if (imageTypes.has(file.mimetype)) callback(null, true)
+	else callback(new AppError(400, 'Only PNG and JPEG images are allowed'))
 }
 
-export const videoFilter = (
-	request: Request,
-	file: Express.Multer.File,
-	callback: FileFilterCallback
-): void => {
-	if (file.mimetype === 'video/mp4' ||
-		file.mimetype === 'image/png' ||
-		file.mimetype === 'image/jpg' ||
-		file.mimetype === 'image/jpeg' ||
-		file.size <= MAX_FILE_SIZE) {
-		callback(null, true)
-} else {
-		callback(null, false)
-}
+export const videoFilter = (_request: Request, file: Express.Multer.File, callback: FileFilterCallback) => {
+	if ((file.fieldname === 'file' && file.mimetype === 'video/mp4') ||
+		(file.fieldname === 'icon' && imageTypes.has(file.mimetype))) callback(null, true)
+	else callback(new AppError(400, 'An MP4 video and a PNG or JPEG icon are required'))
 }

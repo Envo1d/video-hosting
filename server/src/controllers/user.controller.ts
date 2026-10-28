@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { unlink } from 'fs'
-import { join } from 'path'
+import { removeUpload, uploadPathFromUrl } from '../utils/uploads'
 import { User } from '../entities/user.entity'
 import { UpdateProfileInput } from '../schemas/user.schema'
 import { getFullUser, getUserBackImageById, getUserImageById, updateUserBackImage, updateUserImage, updateUserProfile } from '../services/user.service'
@@ -59,7 +58,7 @@ export const updateProfileImage = async (
 
 			const oldImage = await getUserImageById(user.id)
 			if(oldImage && !oldImage?.includes('default.jpg')) {
-				unlink(join(__dirname.replace('\\controllers', ''), 'public', oldImage.substring(oldImage.indexOf('/images/'))), (err)=> { if(err) throw err })
+				await removeUpload(uploadPathFromUrl(oldImage))
 			}
 			await updateUserImage(user.id,  process.env.APP_URL+'/images/'+user.image)
 
@@ -80,7 +79,7 @@ export const updateProfileBackImage = async (
 
 			const oldImage = await getUserBackImageById(user.id)
 			if(oldImage && oldImage !== '') {
-				unlink(join(__dirname.replace('\\controllers', ''), 'public', oldImage.substring(oldImage.indexOf('/images/'))), (err)=> { if(err) throw err })
+				await removeUpload(uploadPathFromUrl(oldImage))
 			}
 			await updateUserBackImage(user.id,  process.env.APP_URL+'/images/'+req.file?.filename as string)
 

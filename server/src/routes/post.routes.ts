@@ -4,9 +4,9 @@ import { deletePost, getPostsByUserId, show, updateCounter, uploadPost } from '.
 import { deserializeUser } from '../middleware/deserializeUser'
 import { requireUser } from '../middleware/requireUser'
 import { validateVideoUpload } from '../middleware/validateVideoUpload'
-import { storage, videoFilter } from '../utils/multer'
+import { MAX_FILE_SIZE, storage, videoFilter } from '../utils/multer'
 
-const upload = multer({storage: storage, fileFilter: videoFilter})
+const upload = multer({storage, fileFilter: videoFilter, limits: { fileSize: MAX_FILE_SIZE, files: 2 }})
 
 const router = Router()
 

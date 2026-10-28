@@ -10,6 +10,9 @@ export class Post extends Model {
 	@Column()
 	title: string
 
+	@Column({ default: 0 })
+	reposts: number
+
   @Column()
 	description: string
 
@@ -25,7 +28,7 @@ export class Post extends Model {
 	@Column()
 	userId: string
 
-	@OneToMany(() => Comment, (comment) => comment.user)
+	@OneToMany(() => Comment, (comment) => comment.post)
   comments: Comment[]
 
 	@OneToMany(() => Like, (like) => like.post)

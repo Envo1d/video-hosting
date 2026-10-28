@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { User } from '../entities/user.entity'
 import { CreateCommentInput, DeleteCommentInput } from '../schemas/comment.schema'
 import { createComment, deleteComment } from '../services/comment.service'
+import AppError from '../utils/appError'
 
 export const addComment = async (
 	req: Request<{}, {}, CreateCommentInput>,
@@ -12,7 +13,7 @@ export const addComment = async (
 		const user = res.locals.user as User
 		const { postId, text } = req.body
 
-		console.log(await createComment(user.id, postId, text))
+		await createComment(user.id, postId, text)
 
 		res.status(200).json({
 			status: 'success'
@@ -30,7 +31,8 @@ export const removeComment = async (
 	next: NextFunction
 ) => {
 	try{
-		await deleteComment(req.body.id)
+		const result = await deleteComment(req.body.id, res.locals.user.id)
+		if (!result.affected) return next(new AppError(404, 'Comment not found'))
 
 		res.status(200).json({
 			status: 'success'

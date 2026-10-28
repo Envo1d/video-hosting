@@ -15,6 +15,7 @@ export const show = async (
 			{
 				const users = await getFullUserByLink(link as string)
 				const user = users[0]
+				if (!user) return next(new AppError(404, 'User not found'))
 				const id = user.id
 				
 				const posts = await getByUserId(id as string)

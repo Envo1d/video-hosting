@@ -1,5 +1,8 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
+import tailwindcss from '@tailwindcss/vite'
+
 export default defineNuxtConfig({
+	srcDir: '.',
+	buildDir: process.env.NUXT_BUILD_DIR || '.nuxt',
 	devtools: { enabled: true },
 	app: {
 		head: {
@@ -12,17 +15,14 @@ export default defineNuxtConfig({
 		'/test': { ssr: true },
 	},
 	css: ['~/assets/css/main.css'],
-	modules: ['nuxt-icon', '@pinia/nuxt', '@pinia-plugin-persistedstate/nuxt'],
+	modules: ['@nuxt/icon', '@pinia/nuxt', 'pinia-plugin-persistedstate/nuxt'],
 	runtimeConfig: {
 		public: {
 			apiUrl: process.env.API_URL,
 			appUrl: process.env.APP_URL,
 		},
 	},
-	postcss: {
-		plugins: {
-			tailwindcss: {},
-			autoprefixer: {},
-		},
+	vite: {
+		plugins: [tailwindcss()],
 	},
 })

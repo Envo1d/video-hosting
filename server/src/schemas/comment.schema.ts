@@ -1,12 +1,12 @@
-import { object, string, TypeOf } from 'zod'
+import { object, string, infer as Infer } from 'zod'
 
 export const createCommentSchema = object({
   body: object({
     text: string({
-      required_error: 'Text is required',
+      error: 'Text is required',
     }),
     postId: string({
-      required_error: 'Post ID is required',
+      error: 'Post ID is required',
     }),
   })
 });
@@ -14,13 +14,13 @@ export const createCommentSchema = object({
 export const deleteCommentSchema = object({
   body: object({
     id: string({
-      required_error: 'Comment ID is required',
+      error: 'Comment ID is required',
     }),
   })
 });
 
 export type CreateCommentInput =
-  TypeOf<typeof createCommentSchema>['body']
+  Infer<typeof createCommentSchema>['body']
 
 export type DeleteCommentInput =
-TypeOf<typeof deleteCommentSchema>['body']
+Infer<typeof deleteCommentSchema>['body']

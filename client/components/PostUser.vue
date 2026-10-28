@@ -65,13 +65,13 @@ function mouseLeave() {
     @mouseleave="() => mouseLeave()"
   >
     <div v-if="!isLoaded" class="absolute flex items-center justify-center top-0 left-0 object-cover rounded-md bg-black h-[200px] w-[350px]">
-      <Icon class="animate-spin ml-1" name="mingcute:loading-line" size="100" color="#ffffff" />
+      <Icon class="animate-spin ml-1" name="mingcute:loading-line" size="100" style="color: #ffffff" />
     </div>
 
     <div>
       <img :src="post.iconUrl" class="absolute flex items-center justify-center top-0 left-0 object-cover rounded-md bg-black h-[200px] w-[350px] transition-all duration-300" :class="!isHover ? 'opacity-100' : 'opacity-0'">
       <video ref="video" muted loop class="h-[200px] w-[350px] rounded-md transition duration-300" :class="isHover ? 'opacity-100' : 'opacity-0'" :src="post.videoUrl" />
-      <div class="absolute right-2 bottom-2 text-white text-xs py-0.5 px-3 bg-[#000] bg-opacity-30 rounded-3xl">
+      <div class="absolute right-2 bottom-2 text-white text-xs py-0.5 px-3 bg-[#000]/30 rounded-3xl">
         {{ currentTime }}
       </div>
     </div>

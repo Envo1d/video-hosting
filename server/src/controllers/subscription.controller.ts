@@ -1,7 +1,17 @@
 import { NextFunction, Request, Response } from 'express'
 import { getByPostId } from '../services/comment.service'
-import { addSubscription, getFollowingPosts, removeSubscription } from '../services/subscription.service'
+import { addSubscription, getFollowing, getFollowers, getFollowingPosts, removeSubscription } from '../services/subscription.service'
 import AppError from '../utils/appError'
+
+export const listFollowing = async (_req: Request, res: Response) => {
+	const following = await getFollowing(100, res.locals.user.id)
+	res.json({ users: following.map(subscription => subscription.subscribedTo) })
+}
+
+export const listFollowers = async (_req: Request, res: Response) => {
+	const followers = await getFollowers(res.locals.user.id)
+	res.json({ users: followers.map(subscription => subscription.subscriber) })
+}
 
 export const follow = async (
 	req: Request,

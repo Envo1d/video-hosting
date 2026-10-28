@@ -1,4 +1,5 @@
-require('dotenv').config();
+require('dotenv').config({ quiet: true });
+process.env.NODE_CONFIG_DIR ||= require('node:path').resolve(__dirname, '../config')
 import config from 'config'
 import express, { NextFunction, Request, Response } from 'express'
 import authRouter from './routes/auth.routes'
@@ -10,23 +11,26 @@ import profileRouter from './routes/profile.routes'
 import subRouter from './routes/subscription.routes'
 import userRouter from './routes/user.routes'
 import AppError from './utils/appError'
-import redisClient from './utils/connectRedis'
+import redisClient, { connectRedis } from './utils/connectRedis'
+import { publicDirectory, prepareUploads } from './utils/uploads'
 import { AppDataSource } from './utils/data-source'
 import validateEnv from './utils/validateEnv'
-import path = require('path');
 import morgan = require('morgan')
 import cookieParser = require('cookie-parser')
 import cors = require('cors')
+import { MulterError } from 'multer'
 
 AppDataSource.initialize()
   .then(async () => {
     // Validate env
     validateEnv();
+    await connectRedis()
+    await prepareUploads()
 
     const app = express();
 
     // MIDDLEWARE
-    app.use(express.static(path.join(__dirname, 'public')))
+    app.use(express.static(publicDirectory))
     
     // 1. Body parser
     app.use(express.json())
@@ -66,13 +70,17 @@ AppDataSource.initialize()
     });
 
     // UNHANDLED ROUTE
-    app.all('*', (req: Request, res: Response, next: NextFunction) => {
+    app.use((req: Request, res: Response, next: NextFunction) => {
       next(new AppError(404, `Route ${req.originalUrl} not found`));
     });
 
     // GLOBAL ERROR HANDLER
     app.use(
       (error: AppError, req: Request, res: Response, next: NextFunction) => {
+        if (error instanceof MulterError) {
+          res.status(error.code === 'LIMIT_FILE_SIZE' ? 413 : 400).json({ status: 'fail', message: error.message })
+          return
+        }
         error.status = error.status || 'error';
         error.statusCode = error.statusCode || 500;
 
@@ -89,5 +97,9 @@ AppDataSource.initialize()
 
     console.log(`Server started on port: ${port}`);
   })
-  .catch((error) => console.log(error));
-
+  .catch((error) => {
+    console.error(error)
+    process.exitCode = 1
+    if (redisClient.isOpen) redisClient.destroy()
+    if (AppDataSource.isInitialized) void AppDataSource.destroy()
+  });

@@ -6,7 +6,7 @@ services:
     ports:
       - '6500:5432'
     volumes:
-      - progresDB:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
     env_file:
       - ./.env
     command: ["postgres", "-c", "log_statement=all"]
@@ -19,7 +19,7 @@ services:
     volumes:
       - redisDB:/data
 volumes:
-  progresDB:
+  postgres_data:
   redisDB:
 
 

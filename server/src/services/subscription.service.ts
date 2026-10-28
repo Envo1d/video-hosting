@@ -8,6 +8,15 @@ const followRepo = AppDataSource.getRepository(Subscription)
 const userRepo = AppDataSource.getRepository(User)
 const postRepo = AppDataSource.getRepository(Post)
 
+export const getFollowers = async (userId: string) => {
+	return followRepo.find({
+		relations: { subscriber: true },
+		where: { subscribedToId: userId },
+		select: { id: true, subscriber: { id: true, name: true, image: true, link: true, nickname: true } },
+		take: 100
+	})
+}
+
 export const addSubscription = async (targetId: string, userId: string) => {
 	await AppDataSource.manager.save(
     AppDataSource.manager.create(Subscription, {subscriberId: userId, subscribedToId: targetId})
@@ -26,7 +35,7 @@ export const removeSubscription = async (targetId: string, userId: string) => {
 export const getFollowingPosts= async (userId: string) => {
 
   const res = await userRepo.find({
-    relations: ['subscriptions'],
+    relations: { subscriptions: true },
     where: {
       id: userId
     },
@@ -41,7 +50,7 @@ export const getFollowingPosts= async (userId: string) => {
   const ids = res[0].subscriptions.map(sub=>sub.subscribedToId)
 
   return await postRepo.find({
-    relations: ['user', 'likes'],
+    relations: { user: true, likes: true },
     where: {
       userId: In(ids)
     },
@@ -71,7 +80,7 @@ export const getFollowingPosts= async (userId: string) => {
 
 export const getSuggested = async (amount: number, userId: string) => {
   return await userRepo.find({
-    relations: ['subscribers'],
+    relations: { subscribers: true },
     where: [
       {
         id: Not(userId),
@@ -107,7 +116,7 @@ export const getSuggested = async (amount: number, userId: string) => {
 
 export const getFollowing = async (amount: number, userId: string) => {
   return await followRepo.find({
-    relations: ['subscribedTo', 'subscriber'],
+    relations: { subscribedTo: true, subscriber: true },
     where: {
       subscriberId: userId
     },

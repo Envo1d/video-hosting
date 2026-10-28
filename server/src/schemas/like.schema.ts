@@ -1,9 +1,9 @@
-import { object, string, TypeOf } from 'zod'
+import { object, string, infer as Infer } from 'zod'
 
 export const createLikeSchema = object({
   body: object({
     postId: string({
-      required_error: 'Post ID is required',
+      error: 'Post ID is required',
     }),
   })
 });
@@ -11,13 +11,13 @@ export const createLikeSchema = object({
 export const deleteLikeSchema = object({
   body: object({
     id: string({
-      required_error: 'Like ID is required',
+      error: 'Like ID is required',
     }),
   })
 });
 
 export type CreateLikeInput =
-  TypeOf<typeof createLikeSchema>['body']
+  Infer<typeof createLikeSchema>['body']
 
  export type DeleteLikeInput =
-  TypeOf<typeof deleteLikeSchema>['body']
+  Infer<typeof deleteLikeSchema>['body']

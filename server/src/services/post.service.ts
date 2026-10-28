@@ -11,7 +11,7 @@ export const createPost = async (userId: string, videoUrl: string, iconUrl: stri
 
 export const getAll = async () => {
   return await postRepo.find({
-    relations: ['user', 'likes'],
+    relations: { user: true, likes: true },
     order: {
       created_at: 'DESC'
     },
@@ -36,8 +36,8 @@ export const getAll = async () => {
   })
 }
 
-export const getRandom = async (postId: string) => {
-  return await AppDataSource.query(`SELECT posts.id, title, "videoUrl", "iconUrl", "userId", users.name, users.image FROM posts LEFT JOIN users ON "userId" = users.id WHERE posts.id != '${postId}' ORDER BY RANDOM() LIMIT 10`)
+export const getRandom = async (postId?: string) => {
+  return await AppDataSource.query('SELECT posts.id, title, "videoUrl", "iconUrl", "userId", users.name, users.image FROM posts LEFT JOIN users ON "userId" = users.id WHERE ($1::text IS NULL OR posts.id::text != $1) ORDER BY RANDOM() LIMIT 10', [postId || null])
 }
 
 export const getPostIdsByUserId = async(userId: string)=> {
@@ -51,7 +51,7 @@ export const getPostIdsByUserId = async(userId: string)=> {
 
 export const getByUserId = async(userId: string) => {
   return await postRepo.find({
-    relations: ['user', 'likes'],
+    relations: { user: true, likes: true },
     where: {user: {id: userId}},
     select: {
       id: true,
@@ -75,11 +75,12 @@ export const getByUserId = async(userId: string) => {
 
 export const getByIdAndUserId = async (id: string, userId: string) => {
   return await postRepo.findOne({
-    relations: ['user'],
+    relations: { user: true },
     where: {id: id, user: {id: userId}},
     select: {
       id: true,
-      videoUrl: true
+      videoUrl: true,
+      iconUrl: true
     }
   })
 }
@@ -94,7 +95,7 @@ export const updateRepostsCounter = async (id: string) => {
 
 export const getById = async (id: string) => {
   return await postRepo.findOne({
-    relations: ['user', 'likes'],
+    relations: { user: true, likes: true },
     where: {id: id},
     select: {
       id: true,

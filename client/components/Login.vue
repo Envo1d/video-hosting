@@ -61,7 +61,7 @@ async function login() {
       <button
         :disabled="!email || !password"
         :class="(!email || !password) ? 'bg-primary' : 'bg-secondary'"
-        class="w-full font-semibold text-white py-3 rounded-sm text-[17px]"
+        class="w-full font-semibold text-white py-3 rounded-xs text-[17px]"
         @click="() => login()"
       >
         Log in

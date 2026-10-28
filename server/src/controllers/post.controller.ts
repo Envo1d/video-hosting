@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import fs from 'fs'
-import { join } from 'path'
+import { removeUpload, uploadPathFromUrl } from '../utils/uploads'
 import { User } from '../entities/user.entity'
 import { getByPostId } from '../services/comment.service'
 import { createPost, getById, getByIdAndUserId, getByUserId, remove, updateRepostsCounter } from '../services/post.service'
@@ -37,7 +36,8 @@ export const getPostsByUserId = async (
 	res: Response, 
 	next: NextFunction) => {
 		try {
-			const {userId} = req.body
+			const userId = req.query.userId
+			if (typeof userId !== 'string' || !userId) return next(new AppError(400, 'User id is required'))
 			
 			const posts = await getByUserId(userId)
 
@@ -96,7 +96,8 @@ export const deletePost = async (
 
 			if(post)
 			{
-				await fs.unlink(join(__dirname.replace('\\controllers', ''), 'public', post?.videoUrl.substring(post?.videoUrl.indexOf('/videos/'))), (err) => { if(err) throw err })
+				await removeUpload(uploadPathFromUrl(post.videoUrl))
+				if (post.iconUrl) await removeUpload(uploadPathFromUrl(post.iconUrl))
 
 				await remove(post.id)
 

@@ -1,9 +1,9 @@
-import { object, string, TypeOf } from 'zod'
+import { object, string, infer as Infer } from 'zod'
 
 export const createSubSchema = object({
   body: object({
     id: string({
-      required_error: 'User ID is required',
+      error: 'User ID is required',
     }),
   })
 });
@@ -11,13 +11,13 @@ export const createSubSchema = object({
 export const deleteSubSchema = object({
   body: object({
     id: string({
-      required_error: 'Like ID is required',
+      error: 'Like ID is required',
     }),
   })
 });
 
 export type CreateSubInput =
-  TypeOf<typeof createSubSchema>['body']
+  Infer<typeof createSubSchema>['body']
 
  export type DeleteSubInput =
-  TypeOf<typeof deleteSubSchema>['body']
+  Infer<typeof deleteSubSchema>['body']

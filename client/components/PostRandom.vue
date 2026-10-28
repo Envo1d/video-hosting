@@ -67,7 +67,7 @@ function loadedData() {
             :src="post.videoUrl" loop muted class="object-cover mx-auto h-full" @loadeddata="() => loadedData()"
           />
 
-          <div class="absolute right-2 bottom-2 text-white text-xs py-0.5 px-3 bg-[#000] bg-opacity-30 rounded-3xl">
+          <div class="absolute right-2 bottom-2 text-white text-xs py-0.5 px-3 bg-[#000]/30 rounded-3xl">
             {{ currentTime }}
           </div>
         </div>

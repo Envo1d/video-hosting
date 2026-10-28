@@ -36,6 +36,7 @@ export const removeLike = async (
 		const { id } = req.body
 
 		const like = await getLikeByIdForPost(id)
+		if (like && like.userId !== res.locals.user.id) return next(new AppError(403, 'You can only remove your own likes'))
 		if(like) {
 			await deleteLikeForPost(id)
 

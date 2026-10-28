@@ -60,7 +60,7 @@ watch(() => posts.value, () => {
     >
       <div class="bg-primary w-[calc(90vw-150px)] hidden lg:flex overflow-hidden rounded-xl h-[280px] max-h-[280px] mb-10">
         <button v-if="$profileStore.id === $userStore.id" class="absolute mt-5 ml-10 h-min" @click="() => $generalStore.isEditProfileBackOpen = true">
-          <Icon name="mdi:pencil" class="text-white text-opacity-30 hover:text-opacity-100" size="18" />
+          <Icon name="mdi:pencil" class="text-white/30 hover:text-white" size="18" />
         </button>
         <img v-if="$profileStore.backgroundImage" class="w-full" :src="$profileStore.backgroundImage">
       </div>

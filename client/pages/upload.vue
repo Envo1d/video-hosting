@@ -141,9 +141,9 @@ function clearIcon() {
 
     <div
       v-if="isUploading"
-      class="fixed flex items-center justify-center top-0 left-0 w-full h-screen bg-black z-50 bg-opacity-50"
+      class="fixed flex items-center justify-center top-0 left-0 w-full h-screen bg-black/50 z-50"
     >
-      <Icon class="animate-spin ml-1" name="mingcute:loading-line" size="100" color="#fff" />
+      <Icon class="animate-spin ml-1" name="mingcute:loading-line" size="100" style="color: #fff" />
     </div>
 
     <NuxtLayout :name="layout">
@@ -166,11 +166,11 @@ function clearIcon() {
               @drop.prevent="onDrop"
               @dragover.prevent
             >
-              <Icon name="majesticons:cloud-upload" size="40" color="#b3b3b1" />
+              <Icon name="majesticons:cloud-upload" size="40" style="color: #b3b3b1" />
               <div class="mt-4 text-[17px]">Select video to upload</div>
               <div class="mt-1.5 text-[13px]">Or drag and drop a file</div>
               <div class="mt-12 text-sm">MP4</div>
-              <div class="px-2 py-1.5 mt-8 text-white text-[15px] w-[80%] bg-secondary rounded-sm hover:bg-secondary/80">
+              <div class="px-2 py-1.5 mt-8 text-white text-[15px] w-[80%] bg-secondary rounded-xs hover:bg-secondary/80">
                 Select file
               </div>
               <input id="fileInput" ref="file" type="file" hidden accept=".mp4" @input="onChange">
@@ -204,11 +204,11 @@ function clearIcon() {
               @drop.prevent="onDropIcon"
               @dragover.prevent
             >
-              <Icon name="majesticons:cloud-upload" size="40" color="#b3b3b1" />
+              <Icon name="majesticons:cloud-upload" size="40" style="color: #b3b3b1" />
               <div class="mt-4 text-[17px]">Select video icon</div>
               <div class="mt-1.5 text-[13px]">Or drag and drop a file</div>
               <div class="mt-12 text-sm">JPG, JPEG, PNG</div>
-              <div class="px-2 py-1.5 mt-8 text-white text-[15px] w-[80%] bg-secondary rounded-sm hover:bg-secondary/80">
+              <div class="px-2 py-1.5 mt-8 text-white text-[15px] w-[80%] bg-secondary rounded-xs hover:bg-secondary/80">
                 Select file
               </div>
               <input id="iconInput" ref="icon" type="file" hidden accept=".jpg, .jpeg, .png" @input="onChangeIcon">
@@ -246,7 +246,7 @@ function clearIcon() {
                   {{ caption.length }}/100
                 </div>
               </div>
-              <input v-model="caption" type="text" maxlength="100" class="w-full border border-gray bg-transparent p-2.5 rounded-md focus:outline-none">
+              <input v-model="caption" type="text" maxlength="100" class="w-full border border-gray bg-transparent p-2.5 rounded-md focus:outline-hidden">
             </div>
 
             <div class="mt-5">
@@ -263,7 +263,7 @@ function clearIcon() {
                 cols="30"
                 rows="18"
                 maxlength="5000"
-                class="resize-none w-full bg-transparent text-white border border-gray rounded-md py-2.5 px-3 focus:outline-none"
+                class="resize-none w-full bg-transparent text-white border border-gray rounded-md py-2.5 px-3 focus:outline-hidden"
               />
             </div>
 

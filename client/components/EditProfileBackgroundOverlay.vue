@@ -56,7 +56,7 @@ async function update() {
       $generalStore.isEditProfileBackOpen = false
     }
   }
-  catch (err) {
+  catch {
     isUploading.value = false
   }
 }
@@ -65,14 +65,14 @@ async function update() {
 <template>
   <div
     id="EditProfileBackgroundOverlay"
-    class="fixed justify-center pt-14 md:pt-[105px] z-50 top-0 left-[30%] w-full h-full bg-main bg-opacity-50 overflow-auto"
+    class="fixed justify-center pt-14 md:pt-[105px] z-50 top-0 left-[30%] w-full h-full bg-main/50 overflow-auto"
   >
     <Notification :notification-type="errorType" />
     <div
       v-if="isUploading"
-      class="fixed flex items-center justify-center top-0 left-0 w-full h-screen bg-black z-50 bg-opacity-50"
+      class="fixed flex items-center justify-center top-0 left-0 w-full h-screen bg-black/50 z-50"
     >
-      <Icon class="animate-spin ml-1" name="mingcute:loading-line" size="100" color="#fff" />
+      <Icon class="animate-spin ml-1" name="mingcute:loading-line" size="100" style="color: #fff" />
     </div>
     <div
       class="relative bg-main border border-solid border-secondary w-full max-w-[700px] sm:h-[580px] h-[655px] mx-3 p-4 rounded-lg mb-10"
@@ -82,7 +82,7 @@ async function update() {
           Edit profile background
         </div>
         <button @click="() => discard()">
-          <Icon size="25" name="mdi:close" color="#fff" />
+          <Icon size="25" name="mdi:close" style="color: #fff" />
         </button>
       </div>
 
@@ -94,11 +94,11 @@ async function update() {
           @drop.prevent="onDropIcon"
           @dragover.prevent
         >
-          <Icon name="majesticons:cloud-upload" size="40" color="#b3b3b1" />
+          <Icon name="majesticons:cloud-upload" size="40" style="color: #b3b3b1" />
           <div class="mt-4 text-[17px]">Select image</div>
           <div class="mt-1.5 text-[13px]">Or drag and drop a file</div>
           <div class="mt-12 text-sm">JPG, JPEG, PNG</div>
-          <div class="px-2 py-1.5 mt-8 text-white text-[15px] w-[80%] bg-secondary rounded-sm hover:bg-secondary/80">
+          <div class="px-2 py-1.5 mt-8 text-white text-[15px] w-[80%] bg-secondary rounded-xs hover:bg-secondary/80">
             Select file
           </div>
           <input id="iconInput" ref="icon" type="file" hidden accept=".jpg, .jpeg, .png" @input="onChangeIcon">

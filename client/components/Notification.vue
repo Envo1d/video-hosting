@@ -26,7 +26,7 @@ watch(() => notificationType.value, () => {
 <template>
   <div class="w-[100%] relative flex justify-center">
     <div
-      class="absolute top-6 z-50 mx-auto bg-[#141414] bg-opacity-70 border-secondary/50 border text-white px-14 py-3 rounded-xl"
+      class="absolute top-6 z-50 mx-auto bg-[#141414]/70 border-secondary/50 border text-white px-14 py-3 rounded-xl"
       :class="notificationType ? 'visible' : 'invisible'"
     >
       {{ notification }}

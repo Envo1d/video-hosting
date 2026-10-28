@@ -1,5 +1,5 @@
 /** @type {import('tailwindcss').Config} */
-const twColors = require('tailwindcss/colors')
+import twColors from 'tailwindcss/colors'
 
 const colors = {
   main: '#17171E',
@@ -11,7 +11,7 @@ const colors = {
   red: twColors.red,
 }
 
-module.exports = {
+export default {
   content: [
     './components/**/*.{js,vue,ts}',
     './layouts/**/*.vue',

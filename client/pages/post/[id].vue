@@ -74,22 +74,6 @@ async function actionUser(type: 'follow' | 'unfollow') {
   }
 }
 
-async function deletePost() {
-  const res = confirm('Are you sure you want to delete this video?')
-
-  try {
-    if (res) {
-      if ($generalStore.selectedPost)
-        await $userStore.deletePost($generalStore.selectedPost)
-      await $profileStore.getProfile($userStore.id)
-      router.push(`/profile/${$userStore.id}`)
-    }
-  }
-  catch (error) {
-    console.error(error)
-  }
-}
-
 async function copyLink(id: string | undefined) {
   if (id === undefined)
     return
@@ -181,11 +165,11 @@ watch(() => comment.value, (com) => {
               views
             </div>
             <div class="flex flex-row">
-              <button class="px-3 py-1 bg-gray bg-opacity-60 rounded-full hover:bg-secondary hover:bg-opacity-100" :class="isLiked ? 'border border-solid border-secondary' : ''" @click="() => isLiked ? unlikePost() : likePost()">
+              <button class="px-3 py-1 bg-gray/60 rounded-full hover:bg-secondary" :class="isLiked ? 'border border-solid border-secondary' : ''" @click="() => isLiked ? unlikePost() : likePost()">
                 <Icon :name="isLiked ? 'carbon:thumbs-up-filled' : 'carbon:thumbs-up'" class="-mt-1" size="18" />
                 <span class="ml-1.5">{{ $generalStore.formatLikes(selectedPost?.likes.length) }}</span>
               </button>
-              <button class="ml-3 px-3 py-1 bg-gray bg-opacity-60 rounded-full hover:bg-secondary hover:bg-opacity-100" @click="copyLink(selectedPost?.id)">
+              <button class="ml-3 px-3 py-1 bg-gray/60 rounded-full hover:bg-secondary" @click="copyLink(selectedPost?.id)">
                 <Icon name="ph:share-fat-fill" class="-mt-1" size="18" />
                 <span class="ml-1.5">Share</span>
               </button>
@@ -243,9 +227,9 @@ watch(() => comment.value, (com) => {
             class="flex items-center justify-between h-max w-full mt-5 mb-5"
           >
             <div class="flex items-center rounded-lg w-full border-white/40 border">
-              <textarea ref="input" v-model="comment" maxlength="1000" cols="30" rows="1" class="resize-none overflow-hidden bg-transparent placeholder-white/40 text-[14px] focus:outline-none w-full p-2 rounded-lg" type="text" placeholder="Add comment..." />
+              <textarea ref="input" v-model="comment" maxlength="1000" cols="30" rows="1" class="resize-none overflow-hidden bg-transparent placeholder-white/40 text-[14px] focus:outline-hidden w-full p-2 rounded-lg" type="text" placeholder="Add comment..." />
             </div>
-            <button class="font-semibold text-sm ml-5 py-1 px-3 rounded-full" :disabled="!comment" :class="comment ? 'bg-secondary cursor-pointer bg-opacity-100 hover:bg-secondary/80' : 'bg-white bg-opacity-10'" @click="() => addComment()">
+            <button class="font-semibold text-sm ml-5 py-1 px-3 rounded-full" :disabled="!comment" :class="comment ? 'bg-secondary cursor-pointer hover:bg-secondary/80' : 'bg-white/10'" @click="() => addComment()">
               Post
             </button>
           </div>

@@ -91,7 +91,7 @@ watch(() => name.value, () => {
       <button
         :disabled="!email || !password || !name || !confirmPassword"
         :class="(!email || !password || !name || !confirmPassword) ? 'bg-primary' : 'bg-secondary'"
-        class="w-full font-semibold text-white py-3 rounded-sm text-[17px]"
+        class="w-full font-semibold text-white py-3 rounded-xs text-[17px]"
         @click="() => register()"
       >
         Sign up

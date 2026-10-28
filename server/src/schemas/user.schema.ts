@@ -1,23 +1,23 @@
-import { object, string, TypeOf } from 'zod'
+import { object, string, infer as Infer } from 'zod'
 
 export const createUserSchema = object({
   body: object({
     name: string({
-      required_error: 'Name is required',
+      error: 'Name is required',
     }),
     nickname: string({
-      required_error: 'Nickname is required'
+      error: 'Nickname is required'
     }),
     email: string({
-      required_error: 'Email address is required',
+      error: 'Email address is required',
     }).email('Invalid email address'),
     password: string({
-      required_error: 'Password is required',
+      error: 'Password is required',
     })
       .min(8, 'Password must be more than 8 characters')
       .max(32, 'Password must be less than 32 characters'),
     passwordConfirm: string({
-      required_error: 'Please confirm your password',
+      error: 'Please confirm your password',
     }),
   }).refine((data) => data.password === data.passwordConfirm, {
     path: ['passwordConfirm'],
@@ -28,10 +28,10 @@ export const createUserSchema = object({
 export const loginUserSchema = object({
   body: object({
     email: string({
-      required_error: 'Email address is required',
+      error: 'Email address is required',
     }).email('Invalid email address'),
     password: string({
-      required_error: 'Password is required',
+      error: 'Password is required',
     }).min(8, 'Invalid email or password'),
   }),
 });
@@ -39,17 +39,17 @@ export const loginUserSchema = object({
 export const updateProfileSchema = object({
   body: object({
     name: string({
-      required_error: 'Name is required',
+      error: 'Name is required',
     }).min(3, 'Invalid name'),
     bio: string().min(3, 'Invalid bio').optional(),
   }),
 });
 
 export type CreateUserInput = Omit<
-  TypeOf<typeof createUserSchema>['body'],
+  Infer<typeof createUserSchema>['body'],
   'passwordConfirm'
 >;
 
-export type LoginUserInput = TypeOf<typeof loginUserSchema>['body'];
+export type LoginUserInput = Infer<typeof loginUserSchema>['body'];
 
-export type UpdateProfileInput = TypeOf<typeof updateProfileSchema>['body'];
+export type UpdateProfileInput = Infer<typeof updateProfileSchema>['body'];

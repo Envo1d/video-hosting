@@ -1,7 +1,9 @@
-require('dotenv').config()
+require('dotenv').config({ quiet: true })
+process.env.NODE_CONFIG_DIR ||= require('node:path').resolve(__dirname, '../../config')
 import config from 'config'
 import 'reflect-metadata'
 import { DataSource } from 'typeorm'
+import path from 'node:path'
 
 const postgresConfig = config.get<{
   host: string;
@@ -16,8 +18,7 @@ export const AppDataSource = new DataSource({
   type: 'postgres',
   synchronize: config.get<string>('nodeEnv') === 'development',
   logging: false,
-  entities: ['src/entities/**/*.entity{.ts,.js}'],
-  migrations: ['src/migrations/**/*{.ts,.js}'],
-  subscribers: ['src/subscribers/**/*{.ts,.js}'],
+  entities: [path.join(__dirname, '../entities/**/*.entity{.ts,.js}').replace(/\\/g, '/')],
+  migrations: [path.join(__dirname, '../migrations/**/*{.ts,.js}').replace(/\\/g, '/')],
+  subscribers: [path.join(__dirname, '../subscribers/**/*{.ts,.js}').replace(/\\/g, '/')],
 });
-
